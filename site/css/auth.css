@@ -1,27 +1,23 @@
 * {
     box-sizing: border-box;
-    font-family: 'Nunito SemiBold';
+    font-family: 'Nunito-SemiBold';
     color: var(--text-color);
-}
-
-.body {
-    background-color: var(--background-color);
-    margin: 0;
 }
 
 .container {
     display: flex;
     margin: 57px auto;
     padding: 75px 0 35px;
-    background-color: var(--primary-light-color);
-    border: 0.81px solid var(--primary-color);
-    border-radius: 55px;
     width: 636px;
 }
 
 .home img {
     width: 60px;
     cursor: pointer;
+}
+
+.home img:hover {
+    opacity: 0.8;
 }
 
 .form {
@@ -57,7 +53,7 @@
 }
 
 .title {
-    font-family: 'Nunito ExtraBold';
+    font-family: 'Nunito-ExtraBold';
     font-size: 39px;
 }
 
@@ -69,6 +65,11 @@
 .remember-me {
     display: flex;
     align-items: center;
+}
+
+.checkbox-hided:hover~.checkbox {
+    display: flex;
+    background: var(--primary-light-color);
 }
 
 .checkbox-hided {
@@ -105,8 +106,6 @@
     font-size: 20px;
 }
 
-.bottom-hint-link {
-    font-family: 'Nunito Bold';
-    color: var(--primary-dark-color);
+.link {
+    font-family: 'Nunito-Bold';
 }
-

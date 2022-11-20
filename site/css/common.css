@@ -1,30 +1,44 @@
 @font-face {
-    font-family: 'Nunito SemiBold';
+    font-family: 'Nunito-SemiBold';
     src: url(/fonts/Nunito/Nunito-SemiBold.ttf);
 }
 
 @font-face {
-    font-family: 'Nunito Bold';
+    font-family: 'Nunito-Bold';
     src: url(/fonts/Nunito/Nunito-Bold.ttf);
 }
 
 @font-face {
-    font-family: 'Nunito ExtraBold';
+    font-family: 'Nunito-ExtraBold';
     src: url(/fonts/Nunito/Nunito-ExtraBold.ttf);
 }
 
 @font-face {
-    font-family: 'Nunito Black';
+    font-family: 'Nunito-Black';
     src: url(/fonts/Nunito/Nunito-Black.ttf);
 }
 
 * {
+    color: var(--text-color);
+    font-family: 'Nunito-SemiBold';
+    box-sizing: border-box;
     --text-color: #39454D;
     --background-color: #CDEAFC;
     --primary-light-color: #B2DDFA;
     --primary-color: #5D9FC6;
     --primary-dark-color: #397A96;
     --secondary-color: #FFFFFF;
+}
+
+.body {
+    background-color: var(--background-color);
+    margin: 0;
+}
+
+.container {
+    background-color: var(--primary-light-color);
+    border: 0.81px solid var(--primary-color);
+    border-radius: 55px;
 }
 
 .button {
@@ -38,10 +52,14 @@
     border-radius: 16px;
     box-shadow: 0px 6px 1px #142A34CC;
     overflow: hidden;
-    font-family: 'Nunito ExtraBold';
+    font-family: 'Nunito-ExtraBold';
     color: var(--secondary-color);
     font-size: 19px;
     cursor: pointer;
+}
+
+.button:hover {
+    opacity: 0.8;
 }
 
 .field {
@@ -66,4 +84,13 @@
 .field-hint {
     font-size: 14px;
     margin-top: 6px;
+}
+
+
+.link {
+    color: var(--primary-dark-color);
+}
+
+.link:hover {
+    opacity: 0.8;
 }
