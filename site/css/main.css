@@ -1,0 +1,173 @@
+.profile img {
+    width: 76px;
+    cursor: pointer;
+    margin-left: 17px;
+    border-radius: 38px;
+}
+
+.profile img:hover {
+    opacity: 0.8;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.for-users {
+    display: none;
+}
+
+.container {
+    margin: 112px auto 20px;
+    padding: 0 42px;
+}
+
+.categories {
+    font-size: 19px;
+    margin: 28px 13px;
+}
+
+.selected-link {
+    font-family: 'Nunito-Bold';
+}
+
+.publications {
+    margin-bottom: 46px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.publication {
+    display: flex;
+    align-self: auto;
+    background: var(--background-color);
+    padding: 13px 20px;
+    border: 1px solid var(--primary-color);
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 23px;
+}
+
+.publication:hover {
+    box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
+    background: var(--primary-light-color);
+    cursor: pointer;
+}
+
+.publication-image {
+    width: 80px;
+    border-radius: 13px;
+    margin-right: 24px;
+}
+
+.publication-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex-grow: 4;
+}
+
+.publication-title {
+    font-size: 19px;
+}
+
+.publication-author {
+    width: max-content;
+    font-size: 13px;
+    font-family: 'Nunito-Semibold';
+    color: var(--primary-dark-color);
+}
+
+.publication-ratings {
+    font-family: 'Nunito-Bold';
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.publication-rating {
+    font-size: 32px;
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 10px;
+}
+
+.publication-rating img {
+    padding-left: 8px;
+    width: 50px;
+}
+
+.publication-comments {
+    font-size: 15px;
+    align-self: flex-end;
+}
+
+.publication-comments img {
+    width: 21px;
+    margin-right: 11px;
+}
+
+@media screen and (min-width: 1377px) {
+    .header {
+        position: absolute;
+        right: 112px;
+        top: 10px;
+    }
+
+    .container {
+        justify-content: center;
+        width: 1376px;
+    }
+}
+
+@media screen and (max-width: 1376px) {
+    .body {
+        background-color: var(--primary-light-color);
+    }
+
+    .container {
+        flex-direction: column;
+        align-items: center;
+        border-width: 0px;
+        margin-right: 0;
+        margin: 56px auto 0;
+        padding: 0 21px;
+    }
+}
+
+@media screen and (max-width: 590px) {
+    .publication-ratings {
+        scale: 0.5;
+    }
+
+    .publication-image {
+        margin-right: 10px;
+    }
+
+    .publication {
+        padding: 0px;
+    }
+
+    .categories,
+    .publication-title,
+    .header {
+        font-size: 9px;
+    }
+
+    .profile img {
+        width: 38px;
+    }
+
+    .publication-author {
+        font-size: 7px;
+    }
+}
