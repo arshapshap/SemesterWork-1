@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <title>Авторизация</title>
+</head>
+
+<body class="body">
+    <div class="container">
+        <a class="home" href="/main/"><img src="/img/home.png"></a>
+        <form class="form" name="auth" method="POST" action="/auth/">
+            <div>
+                <div class="title">Войдите в аккаунт</div>
+                <div class="hint">Авторизуйтесь, чтобы оставлять комментарии и публиковать посты.</div>
+            </div>
+            <div class="fields">
+                <div class="field">
+                    <span class="field-title">Логин</span>
+                    <input class="field-input" type="text" id="login" required="required">
+                </div>
+                <div class="field">
+                    <span class="field-title">Пароль</span>
+                    <input class="field-input" type="password" id="password" required="required">
+                </div>
+            </div>
+            <div class="remember-me">
+                <div>
+                    <input class="checkbox-hided" type="checkbox" id="remember-me"></input>
+                    <div class="checkbox">
+                        <img class="checkmark" src="/img/checkmark.svg">
+                    </div>
+                </div>
+                <label for="remember-me" class="remember-me-text">Запомнить меня</label>
+            </div>
+            <button class="button" type="submit">Авторизоваться</button>
+            <div class="register">
+                <span class="register-hint">Нет аккаунта?
+                    <a href="/register/" class="register-hint link">Зарегистрироваться</a>
+                </span>
+            </div>
+        </form>
+    </div>
+</body>
+
+</html>
