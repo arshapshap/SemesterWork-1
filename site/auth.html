@@ -5,7 +5,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/auth.css">
     <title>Авторизация</title>
 </head>
 
@@ -15,7 +16,7 @@
         <form class="form" name="auth" method="POST" action="/auth/">
             <div>
                 <div class="title">Войдите в аккаунт</div>
-                <div class="hint">Авторизуйтесь, чтобы оставлять комментарии и публиковать посты.</div>
+                <div class="title-hint">Авторизуйтесь, чтобы оставлять комментарии и публиковать посты.</div>
             </div>
             <div class="fields">
                 <div class="field">
@@ -37,9 +38,9 @@
                 <label for="remember-me" class="remember-me-text">Запомнить меня</label>
             </div>
             <button class="button" type="submit">Авторизоваться</button>
-            <div class="register">
-                <span class="register-hint">Нет аккаунта?
-                    <a href="/register/" class="register-hint link">Зарегистрироваться</a>
+            <div class="bottom-hint">
+                <span>Нет аккаунта?
+                    <a href="/register.html" class="bottom-hint-link">Зарегистрироваться</a>
                 </span>
             </div>
         </form>
