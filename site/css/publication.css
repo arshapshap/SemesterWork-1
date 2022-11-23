@@ -1,0 +1,89 @@
+.container {
+    margin: 112px auto 20px;
+    padding: 42px;
+}
+
+.publication-image {
+    width: 160px;
+}
+
+.musician {
+    color: var(--text-color);
+    font-family: 'Nunito-ExtraBold';
+}
+
+.div-title {
+    font-size: 19px;
+    padding: 40px 0 0;
+}
+
+.rate {
+    display: flex;
+    justify-content: space-around;
+}
+
+.button {
+    margin-left: 10px;
+    width: 110px;
+    height: 40px;
+    padding: 6px 17px;
+    font-size: 15px;
+}
+
+.comment {
+    display: flex;
+}
+
+.comment-author-image {
+    width: 50px;
+    border-radius: 38px;
+    margin: 10px;
+}
+
+.comment-body {
+    font-size: 12px;
+}
+
+.new-rating form input {
+    width: 20px;
+    height: 20px;
+}
+
+@media screen and (max-width: 800px) {
+    .publication-header, .rate {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .rate {
+        scale: 0.8;
+    }
+
+    .profile-image {
+        width: 38px;
+    }
+
+    .publication-image {
+        width: 80px;
+    }
+
+    .publication-ratings {
+        display: none;
+    }
+
+    .div-title, .publication-title {
+        font-size: 2.3vw;
+    }
+
+    .chords, .publication-author, .comment-body {
+        font-size: 2vw;
+    }
+
+    .header-right {
+        font-size: 2vw;
+    }
+
+    .publication-info {
+        font-size: 1vw;
+    }
+}

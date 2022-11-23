@@ -1,9 +1,3 @@
-* {
-    box-sizing: border-box;
-    font-family: 'Nunito-SemiBold';
-    color: var(--text-color);
-}
-
 .container {
     display: flex;
     margin: 57px auto;

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/publication.css">
+    <title>Публикация</title>
+</head>
+
+<body class="body">
+    <div class="container">
+        <div class="header-left">
+            <a href="/main.html">
+                <img class="profile-image" src="/img/home.png">
+            </a>
+        </div>
+        <div class="header-right">
+            <div class="for-anonimous">
+                <a href="/auth.html" class="link">Войти</a>
+                или
+                <a href="/register.html" class="link">зарегистрироваться</a>
+            </div>
+            <div class="for-users user-info">
+                <div>Артём Шаповалов (<a href="/profile.html" class="link">arshap</a>)</div>
+                <a href="/auth.html" class="link">Выйти</a>
+            </div>
+            <a class="for-anonimous profile" href="/auth.html">
+                <img class="profile-image" src="/img/profile.png">
+            </a>
+            <a class="for-users profile" href="/profile.html">
+                <img class="profile-image" src="https://bugaga.ru/uploads/posts/2017-03/1489052030_kotik-hosiko-12.jpg">
+            </a>
+        </div>
+        <div class="publication">
+            <div class="publication-header">
+                <img class="publication-image"
+                    src="https://steamuserimages-a.akamaihd.net/ugc/845966259237811119/A9DBC5054F0D19D04EBC0E7CC08043E60286C8C2/?imw=512&amp;imh=512&amp;ima=fit&amp;impolicy=Letterbox&amp;imcolor=%23000000&amp;letterbox=true">
+                <div class="publication-info">
+                    <div class="publication-title">
+                        <a href="musician" class="musician link">Linkin Park</a> - One More Light
+                    </div>
+                    <div class="publication-author">
+                        <a href="author" class="link">Артём Шаповалов</a>, 21.11.2022
+                    </div>
+
+                </div>
+                <div class="publication-ratings">
+                    <div class="publication-rating">
+                        <span>5.0</span>
+                        <img src="/img/star.svg">
+                    </div>
+                </div>
+            </div>
+
+            <pre class="chords">
+                    Интро: 
+                <b>Em Cadd9 G D
+                Em Cadd9 G D</b>
+                
+                    Куплет 1: 
+                <b>Em Cadd9 G D</b> 
+                Should've stayed? Were there signs I ignored? 
+                <b>Em Cadd9 G D</b> 
+                Can I help you not to hurt anymore? 
+                <b>Em Cadd9 G D</b> 
+                We saw brilliance when the world was asleep 
+                <b>Em Cadd9 D</b> 
+                There are things that we can have, but can't keep. If they say 
+                
+                    Припев: 
+                <b>Em</b>
+                Who cares if one more light goes out 
+                <b>Cadd9 G</b>
+                In a sky of a million stars? 
+                <b>D</b> 
+                It flickers, flickers 
+                <b>Em</b> 
+                Who cares when someone's time runs out 
+                <b>Cadd9 G</b> 
+                If a moment is all we are? 
+                <b>D</b> 
+                Or quicker, quicker 
+                <b>Em</b> 
+                Who cares if one more light goes out? 
+                <b>Am G D</b> 
+                Well I... do 
+                
+                    Куплет 2: 
+                <b>Em Cadd9 G D</b> 
+                The reminders pull the floor from your feet 
+                <b>Em Cadd9 G D</b> 
+                In the kitchen one more chair than you need, oh 
+                <b>Em Cadd9 G D</b> 
+                And you're angry, and you should be, it's not fair 
+                <b>Em Cadd9 D</b> 
+                Just 'cause you can't see it, doesn't mean it, isn't there. 
+                <b>D</b> 
+                If they say 
+                
+                    Припев: 
+                Em 
+                Who cares if one more light goes out 
+                <b>Cadd9 G</b> 
+                In a sky of a million stars? 
+                <b>D</b> 
+                It flickers, flickers 
+                <b>Em</b> 
+                Who cares when someone's time runs out 
+                <b>Cadd9 G</b> 
+                If a moment is all we are? 
+                <b>D</b> 
+                Or quicker, quicker 
+                <b>Em</b> 
+                Who cares if one more light goes out? 
+                <b>Am G D</b> 
+                Well I... do 
+                
+                    Проигрыш: 
+                <b>Em Cadd9 G D
+                Em Cadd9 D D</b>
+                
+                    Припев: 
+                <b>Em</b>
+                Who cares if one more light goes out 
+                <b>Cadd9 G</b>
+                In a sky of a million stars? 
+                <b>D</b> 
+                It flickers, flickers 
+                <b>Em</b> 
+                Who cares when someone's time runs out 
+                <b>Cadd9 G</b> 
+                If a moment is all we are? 
+                <b>D</b> 
+                Or quicker, quicker 
+                <b>Em</b> 
+                Who cares if one more light goes out? 
+                <b>Am G D</b> 
+                Well I... do 
+                <b>Am G</b> 
+                I... do 
+                
+                    Аутро: <b>G</b>
+            </pre>
+        </div>
+
+        <div class="for-users rate">
+            <div class="new-rating">
+                <div class="div-title">Оцените публикацию:</div>
+                <form name="new-rating" method="POST" action="rating">
+                    <input name="rating" id="rating-1" type="radio" value="1">
+                    <label for="rating-1">1</label>
+                    <input name="rating" id="rating-2" type="radio" value="2">
+                    <label for="rating-2">2</label>
+                    <input name="rating" id="rating-3" type="radio" value="3">
+                    <label for="rating-3">3</label>
+                    <input name="rating" id="rating-4" type="radio" value="4">
+                    <label for="rating-4">4</label>
+                    <input name="rating" id="rating-5" type="radio" value="5">
+                    <label for="rating-5">5</label>
+                    <button class="button" type="submit">Отправить</button>
+                </form>
+            </div>
+            <div class="new-comment">
+                <div class="div-title">Оставьте комментарий:</div>
+                <form name="new-comment" method="POST" action="comment">
+                    <input class="field-input" name="comment" type="text"></input>
+                    <button class="button" type="submit">Отправить</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="comments">
+            <div class="div-title">Комментарии:</div>
+            <div class="publication comment">
+                <img class="profile-image comment-author-image"
+                    src="https://bugaga.ru/uploads/posts/2017-03/1489052030_kotik-hosiko-12.jpg" alt="">
+                <div class="publication-info">
+                    <div class="comment-body">
+                        <a href="author" class="publication-author link">Артём Шаповалов</a>, 11:36 21.11.2022
+                        <br>Аоаоо
+                    </div>
+                </div>
+            </div>
+            <div class="publication comment">
+                <img class="profile-image comment-author-image"
+                    src="https://bugaga.ru/uploads/posts/2017-03/1489052030_kotik-hosiko-12.jpg" alt="">
+                <div class="publication-info">
+                    <div class="comment-body">
+                        <a href="author" class="publication-author link">Артём Шаповалов</a>, 11:36 21.11.2022
+                        <br>Аоаоо
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
