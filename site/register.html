@@ -62,7 +62,7 @@
                 <img class="profile-image" src="/img/home.png">
             </a>
         </div>
-        <form class="form" name="register" method="POST" action="register" onsubmit="return checkForm();">
+        <form class="form" name="register" method="POST" action="/users/register" onsubmit="return checkForm();">
             <div>
                 <div class="title">Создайте аккаунт</div>
                 <div class="title-hint">Создайте аккаунт, чтобы оставлять комментарии и публиковать посты.</div>
@@ -70,21 +70,21 @@
             <div class="fields">
                 <div class="field">
                     <span class="field-title">Логин</span>
-                    <input class="field-input" type="text" id="login" required="required">
+                    <input class="field-input" type="text" id="login" name="login" required="required" maxlength="50">
                     <div id="correct-login-hint" class="field-hint">Логин может содержать только латинские буквы, цифры и нижнее подчеркивание</div>
                 </div>
                 <div class="field">
                     <span class="field-title">Фамилия и имя</span>
-                    <input class="field-input" type="text" id="name" required="required">
+                    <input class="field-input" type="text" id="name" name="name" required="required" maxlength="50">
                     <div id="correct-name-hint" class="field-hint">Имя может содержать только кириллицу</div>
                 </div>
                 <div class="field">
                     <span class="field-title">Пароль</span>
-                    <input class="field-input" type="password" id="password" required="required" minlength="8">
+                    <input class="field-input" type="password" id="password" name="password" required="required" minlength="8" maxlength="50">
                 </div>
                 <div class="field">
                     <span class="field-title">Подтвердите пароль</span>
-                    <input class="field-input" type="password" id="password-confirm" required="required" minlength="8">
+                    <input class="field-input" type="password" id="password-confirm" required="required" minlength="8" maxlength="50">
                     <div id="password-confirm-hint" class="field-hint">Пароли должны совпадать</div>
                 </div>
             </div>

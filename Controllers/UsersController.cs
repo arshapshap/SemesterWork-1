@@ -5,14 +5,15 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace HttpServer
 {
-    [ApiController("accounts")]
-    class Accounts
+    [ApiController("users")]
+    class UsersController
     {
-        static AccountDAO accountDAO 
-            = new AccountDAO(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=SteamDB;Integrated Security=True", "Table");
+        static UserDAO accountDAO 
+            = new UserDAO(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=SiteDB;Integrated Security=True");
 
 
         [HttpPOST("^$")]
@@ -33,13 +34,13 @@ namespace HttpServer
             return new ControllerResponse(true, action: addCookieAction);
         }
 
-        [HttpPOST("save")]
-        public static ControllerResponse SaveAccount(string login, string password)
+        [HttpPOST("register")]
+        public static ControllerResponse Register(string login, string name, string password)
         {
-            accountDAO.Insert(new Account(login, password));
+            accountDAO.Insert(new User(login, password, HttpUtility.UrlDecode(name)));
 
             var redirectAction = (HttpListenerResponse response) => {
-                    response.Redirect(@"http://steampowered.com");
+                    response.Redirect(@"/main.html");
                 };
 
             return new ControllerResponse(null, redirectAction);

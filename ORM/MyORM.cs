@@ -84,7 +84,7 @@ namespace HttpServer
             var properties = typeof(T)
                 .GetProperties(BindingFlags.Public | BindingFlags.Instance)
                 .Where(p => p.GetCustomAttribute(typeof(FieldDB)) != null)
-                .ToDictionary(p => ((FieldDB)p.GetCustomAttribute(typeof(FieldDB))).ColumnName, p => $"'{p.GetValue(item)}'");
+                .ToDictionary(p => ((FieldDB)p.GetCustomAttribute(typeof(FieldDB))).ColumnName, p => $"{(((FieldDB)p.GetCustomAttribute(typeof(FieldDB))).IsCyrillic ? "N" : "")}'{p.GetValue(item)}'");
 
             string sqlExpression = $"INSERT INTO [dbo].[{TableName}]({string.Join(',', properties.Keys)}) VALUES ({string.Join(',', properties.Values)})";
 

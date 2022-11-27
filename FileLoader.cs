@@ -14,7 +14,7 @@ namespace HttpServer
             string contentType;
 
             if (Directory.Exists(filePath))
-                filePath += "/index.html";
+                filePath += "/main.html";
 
             if (!File.Exists(filePath))
             {
