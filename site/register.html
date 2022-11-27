@@ -19,7 +19,7 @@
 
     function checkLogin() {
         var login = document.getElementById("login").value;
-        if (/^[a-zA-Z0-9_.-]*$/.test(login)) {
+        if (/^[a-zA-Z0-9_]*$/.test(login)) {
             document.getElementById("correct-login-hint").style.display = "none"
             return true
         }
