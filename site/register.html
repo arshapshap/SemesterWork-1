@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 
 <head>
     <meta charset="UTF-8">
@@ -9,6 +9,52 @@
     <title>Регистрация</title>
 </head>
 
+<script>
+    function checkForm() {
+        var correctLogin = checkLogin()
+        var correctName = checkName()
+        var correctPasswords = matchPassword()
+        return correctLogin && correctName && correctPasswords
+    }
+
+    function checkLogin() {
+        var login = document.getElementById("login").value;
+        if (/^[a-zA-Z0-9_.-]*$/.test(login)) {
+            document.getElementById("correct-login-hint").style.display = "none"
+            return true
+        }
+        else {
+            document.getElementById("correct-login-hint").style.display = "block"
+            return false
+        }
+    }
+
+    function checkName() {
+        var name = document.getElementById("name").value;
+        if (/^[а-яА-ЯёЁ ]*$/.test(name)) {
+            document.getElementById("correct-name-hint").style.display = "none"
+            return true
+        }
+        else {
+            document.getElementById("correct-name-hint").style.display = "block"
+            return false
+        }
+    }
+
+    function matchPassword() {
+        var pw1 = document.getElementById("password").value;
+        var pw2 = document.getElementById("password-confirm").value;
+        if (pw1 == pw2) {
+            document.getElementById("password-confirm-hint").style.display = "none"
+            return true
+        }
+        else {
+            document.getElementById("password-confirm-hint").style.display = "block"
+            return false
+        }
+    }
+</script>
+
 <body class="body">
     <div class="container">
         <div class="header-left">
@@ -16,7 +62,7 @@
                 <img class="profile-image" src="/img/home.png">
             </a>
         </div>
-        <form class="form" name="register" method="POST" action="/register.html">
+        <form class="form" name="register" method="POST" action="register" onsubmit="return checkForm();">
             <div>
                 <div class="title">Создайте аккаунт</div>
                 <div class="title-hint">Создайте аккаунт, чтобы оставлять комментарии и публиковать посты.</div>
@@ -25,28 +71,28 @@
                 <div class="field">
                     <span class="field-title">Логин</span>
                     <input class="field-input" type="text" id="login" required="required">
-                    <div class="field-hint">Логин не должен содержать специальных символов</div>
+                    <div id="correct-login-hint" class="field-hint">Логин может содержать только латинские буквы, цифры и нижнее подчеркивание</div>
                 </div>
                 <div class="field">
                     <span class="field-title">Фамилия и имя</span>
                     <input class="field-input" type="text" id="name" required="required">
-                    <div class="field-hint">Введите реальные имя и фамилию</div>
+                    <div id="correct-name-hint" class="field-hint">Имя может содержать только кириллицу</div>
                 </div>
                 <div class="field">
                     <span class="field-title">Пароль</span>
                     <input class="field-input" type="password" id="password" required="required" minlength="8">
-                    <div class="field-hint">Пароль должен содержать как минимум 8 символов</div>
                 </div>
                 <div class="field">
                     <span class="field-title">Подтвердите пароль</span>
                     <input class="field-input" type="password" id="password-confirm" required="required" minlength="8">
+                    <div id="password-confirm-hint" class="field-hint">Пароли должны совпадать</div>
                 </div>
             </div>
             <div class="remember-me">
                 <div>
                     <input class="checkbox-hided" type="checkbox" id="remember-me"></input>
                     <div class="checkbox">
-                        <img class="checkmark" src="/img/checkmark.svg">
+                        <img class="checkmark" src="/img/checkmark.png">
                     </div>
                 </div>
                 <label for="remember-me" class="remember-me-text">Запомнить меня</label>

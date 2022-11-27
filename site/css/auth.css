@@ -62,7 +62,6 @@
 }
 
 .checkbox-hided:hover~.checkbox {
-    display: flex;
     background: var(--primary-light-color);
 }
 
@@ -74,7 +73,20 @@
     cursor: pointer;
 }
 
+.checkmark {
+    width: 14px;
+    height: 14px;
+}
+
+#password-confirm-hint, #correct-login-hint, #correct-name-hint {
+    display: none;
+    color: var(--primary-dark-color);
+}
+
 .checkbox {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 20px;
     height: 20px;
     background: var(--secondary-color);
@@ -83,7 +95,6 @@
 }
 
 .checkbox-hided:checked~.checkbox {
-    display: flex;
     background: var(--primary-color);
 }
 
