@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace HttpServer
 {
-    abstract class HttpRequest : Attribute
+    class FieldDB : Attribute
     {
-        public string MethodURI;
-        protected HttpRequest(string methodURI)
+        public string ColumnName;
+        public FieldDB(string columnName)
         {
-            MethodURI = methodURI;
+            ColumnName = columnName;
         }
     }
 }

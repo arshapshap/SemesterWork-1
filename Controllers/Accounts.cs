@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,70 +11,60 @@ namespace HttpServer
     [ApiController("accounts")]
     class Accounts
     {
-        [HttpPOST]
-        public static void SaveAccount(string login, string password)
-        {
-            string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=SteamDB;Integrated Security=True";
-            string sqlExpression = string.Format("INSERT INTO [dbo].[Table] (login, password) VALUES ('{0}', '{1}')", login, password);
+        static AccountDAO accountDAO 
+            = new AccountDAO(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=SteamDB;Integrated Security=True", "Table");
 
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                SqlCommand command = new SqlCommand(sqlExpression, connection);
-                command.ExecuteNonQuery();
-            }
+
+        [HttpPOST("^$")]
+        public static ControllerResponse Login(string login, string password)
+        {
+            var account = accountDAO.Select(login, password);
+            if (account == null)
+                return new ControllerResponse(false);
+
+            var session = SessionManager.Instance.CreateSession(account.Id, account.Login);
+
+            var addCookieAction =
+                (HttpListenerResponse response) => {
+                    var cookie = new Cookie("SessionId", session.Guid.ToString());
+                    response.Cookies.Add(cookie);
+                };
+
+            return new ControllerResponse(true, action: addCookieAction);
+        }
+
+        [HttpPOST("save")]
+        public static ControllerResponse SaveAccount(string login, string password)
+        {
+            accountDAO.Insert(new Account(login, password));
+
+            var redirectAction = (HttpListenerResponse response) => {
+                    response.Redirect(@"http://steampowered.com");
+                };
+
+            return new ControllerResponse(null, redirectAction);
         }
 
         [HttpGET(@"\d")]
-        public static Account GetAccountById(int id)
+        public ControllerResponse GetAccountById(int id)
         {
-            var result = new Account();
-
-            string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=SteamDB;Integrated Security=True";
-
-            string sqlExpression = string.Format("SELECT * FROM [dbo].[Table] WHERE id={0}", id);
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                SqlCommand command = new SqlCommand(sqlExpression, connection);
-                SqlDataReader reader = command.ExecuteReader();
-
-                if (reader.HasRows && reader.Read())
-                {
-                    result = new Account { Id = reader.GetInt32(0), Login = reader.GetString(1), Password = reader.GetString(2) };
-                }
-
-                reader.Close();
-            }
-
-            return result;
+            var foundAccount = accountDAO.Select(id);
+            if (foundAccount == null)
+                return new ControllerResponse(null, statusCode: HttpStatusCode.NotFound);
+            return new ControllerResponse(foundAccount);
         }
 
-        [HttpGET]
-        public static Account[] GetAccounts()
+        [HttpGET("info", onlyForAuthorized: true, needSessionId: true)]
+        public ControllerResponse GetAccountInfo(Guid sessionId)
         {
-            var accounts = new List<Account>();
+            var session = SessionManager.Instance.GetSession(sessionId);
+            return GetAccountById(session.AccountId);
+        }
 
-            string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=SteamDB;Integrated Security=True";
-
-            string sqlExpression = "SELECT * FROM [dbo].[Table]";
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                SqlCommand command = new SqlCommand(sqlExpression, connection);
-                SqlDataReader reader = command.ExecuteReader();
-
-                if (reader.HasRows)
-                {
-                    while (reader.Read())
-                    {
-                        accounts.Add(new Account { Id = reader.GetInt32(0), Login = reader.GetString(1), Password = reader.GetString(2) });
-                    }
-                }
-
-                reader.Close();
-            }
-            return accounts.ToArray();
+        [HttpGET("^$", onlyForAuthorized: true)]
+        public ControllerResponse GetAccounts()
+        {
+            return new ControllerResponse(accountDAO.Select());
         }
     }
 }

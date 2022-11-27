@@ -8,27 +8,25 @@ namespace HttpServer
 {
     static class FileLoader
     {
-        public static (byte[] buffer, string contentType) GetResponse(string filePath, out bool error)
+        public static bool TryGetResponse(string filePath, out (byte[] buffer, string contentType) response)
         {
-            byte[] buffer = null;
-            var contentType = "plain";
-            error = false;
+            byte[] buffer;
+            string contentType;
 
             if (Directory.Exists(filePath))
                 filePath += "/index.html";
 
-            if (File.Exists(filePath))
+            if (!File.Exists(filePath))
             {
-                buffer = File.ReadAllBytes(filePath);
-                contentType = filePath.Split('.').Last();
-            }
-            else
-            {
-                buffer = Encoding.UTF8.GetBytes("ERROR 404: Resource not found.");
-                error = true;
+                response = (new byte[0], "");
+                return false;
             }
 
-            return (buffer, $"text/{contentType}");
+            buffer = File.ReadAllBytes(filePath);
+            contentType = filePath.Split('.').Last();
+
+            response = (buffer, $"text/{contentType}");
+            return true;
         }
     }
 }

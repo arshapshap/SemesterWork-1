@@ -62,26 +62,11 @@ namespace HttpServer
             {
                 context = listener.GetContext();
 
-                HttpListenerRequest request = context.Request;
-                HttpListenerResponse response = context.Response;
+                byte[] buffer;
+                var response = ResponseProvider.GetResponse(context, settings.Path, out buffer);
 
-                (byte[] buffer, string contentType) serverResponse;
-                if (!MethodHandler(request, response, out serverResponse))
-                {
-                    string filePath = settings.Path + request.RawUrl.Replace("%20", " ");
-                    bool notFoundError;
-                    serverResponse = FileLoader.GetResponse(filePath, out notFoundError);
-                    if (notFoundError)
-                    {
-                        response.StatusCode = (int)HttpStatusCode.NotFound;
-                        Program.PrintMessage($"Ресурс не найден по следующему пути: {filePath}.");
-                    }
-                }
-
-                response.Headers.Set("Content-Type", serverResponse.contentType);
-                response.ContentLength64 = serverResponse.buffer.Length;
                 Stream output = response.OutputStream;
-                output.Write(serverResponse.buffer, 0, serverResponse.buffer.Length);
+                output.Write(buffer, 0, buffer.Length);
                 output.Close();
 
                 Processing();
@@ -97,69 +82,6 @@ namespace HttpServer
             }
         }
 
-        private bool MethodHandler(HttpListenerRequest request, HttpListenerResponse response, out (byte[] buffer, string contentType) serverResponse)
-        {
-            if (request.Url.Segments.Length < 2)
-            {
-                serverResponse = (new byte[0], "");
-                return false;
-            }
-
-            string controllerName = request.Url.Segments[1].Replace("/", "");
-
-            string[] strParams = request.Url
-                                    .Segments
-                                    .Skip(2)
-                                    .Select(s => s.Replace("/", ""))
-                                    .ToArray();
-
-            var assembly = Assembly.GetExecutingAssembly();
-
-            var controller = assembly.GetTypes()
-                .Where(t => Attribute.IsDefined(t, typeof(ApiController)) &&
-                    (t.GetCustomAttribute(typeof(ApiController)) as ApiController)?.ClassURI == controllerName)
-                .FirstOrDefault();
-
-            if (controller == null)
-            {
-                serverResponse = (new byte[0], "");
-                return false;
-            }
-
-            var methodURI = (strParams.Length > 0) ? strParams[0] : "";
-            var method = controller.GetMethods().Where(t => t.GetCustomAttributes(true)
-                .Any(attr => attr.GetType().Name == $"Http{request.HttpMethod}" && Regex.IsMatch(methodURI, ((HttpRequest)attr).MethodURI)))
-                .FirstOrDefault();
-
-            if (method == null)
-            {
-                serverResponse = (new byte[0], "");
-                return false;
-            }
-
-            if (request.HttpMethod == "POST")
-            {
-                var postData = GetRequestPostData(request);
-                strParams = postData.Split('&').Select(p => p.Split('=')[1]).ToArray();
-            }
-
-            object[] queryParams = method.GetParameters()
-                                .Select((p, i) => Convert.ChangeType(strParams[i], p.ParameterType))
-                                .ToArray();
-
-            var ret = method.Invoke(Activator.CreateInstance(controller), queryParams);
-
-            if (request.HttpMethod == "POST")
-            {
-                response.Redirect(@"http://steampowered.com");
-                serverResponse = (new byte[0], "");
-                return true;
-            }
-
-            serverResponse = (Encoding.ASCII.GetBytes(JsonSerializer.Serialize(ret)), "application/json");
-            return true;
-        }
-
         private void UpdateSettings()
         {
             settings = new Settings();
@@ -170,21 +92,6 @@ namespace HttpServer
 
             listener.Prefixes.Clear();
             listener.Prefixes.Add($"http://localhost:{settings.Port}/");
-        }
-
-        private static string GetRequestPostData(HttpListenerRequest request)
-        {
-            if (!request.HasEntityBody)
-            {
-                return null;
-            }
-            using (Stream body = request.InputStream)
-            {
-                using (var reader = new StreamReader(body, request.ContentEncoding))
-                {
-                    return reader.ReadToEnd();
-                }
-            }
         }
     }
 }
