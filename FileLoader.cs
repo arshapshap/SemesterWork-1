@@ -13,9 +13,6 @@ namespace HttpServer
             byte[] buffer;
             string contentType;
 
-            if (Directory.Exists(filePath))
-                filePath += "/main.html";
-
             if (!File.Exists(filePath))
             {
                 response = (new byte[0], "");

@@ -39,14 +39,15 @@ namespace HttpServer
 
         private static bool TryHandleMethod(HttpListenerRequest request, HttpListenerResponse response, string path, out (byte[] buffer, string contentType) serverResponse)
         {
-
+            string controllerName;
             if (request.Url.Segments.Length < 2)
             {
+                response.Redirect(@"/main");
                 serverResponse = (new byte[0], "");
-                return false;
+                return true;
             }
-
-            string controllerName = request.Url.Segments[1].Replace("/", "");
+            
+            controllerName = request.Url.Segments[1].Replace("/", "");
 
             string[] strParams = request.Url
                                     .Segments
@@ -56,28 +57,27 @@ namespace HttpServer
 
             var assembly = Assembly.GetExecutingAssembly();
 
-            var controller = assembly.GetTypes()
-                .Where(t => Attribute.IsDefined(t, typeof(ApiController)) &&
-                    ((ApiController?)t.GetCustomAttribute(typeof(ApiController)))?.ClassURI == controllerName)
-                .FirstOrDefault();
-
-            if (controller == null)
-            {
-                serverResponse = (new byte[0], "");
-                return false;
-            }
-
-            var methodURI = (strParams.Length > 0) ? strParams[0] : "";
-
-            var method = controller.GetMethods().Where(t => t.GetCustomAttributes(true)
-                .Any(attr => attr.GetType().Name == $"Http{request.HttpMethod}"
-                    && Regex.IsMatch(methodURI, (((HttpRequest)attr).MethodURI == "") ? t.Name.ToLower() : ((HttpRequest)attr).MethodURI)))
-                .FirstOrDefault();
+            var controller = FindControllerByURI(assembly, "^$");
+            var method = FindMethodByURI(controller, request.HttpMethod, controllerName);
 
             if (method == null)
             {
-                serverResponse = (new byte[0], "");
-                return false;
+                controller = FindControllerByURI(assembly, controllerName);
+
+                if (controller == null)
+                {
+                    serverResponse = (new byte[0], "");
+                    return false;
+                }
+
+                var methodURI = (strParams.Length > 0) ? strParams[0] : "";
+                method = FindMethodByURI(controller, request.HttpMethod, methodURI);
+
+                if (method == null)
+                {
+                    serverResponse = (new byte[0], "");
+                    return false;
+                }
             }
 
             if (request.HttpMethod == "POST")
@@ -148,6 +148,22 @@ namespace HttpServer
             else
                 serverResponse = (Encoding.ASCII.GetBytes(JsonSerializer.Serialize(methodResponse.response)), "application/json");
             return true;
+        }
+
+        private static Type? FindControllerByURI(Assembly assembly, string uri)
+        {
+            return assembly.GetTypes()
+                .Where(t => Attribute.IsDefined(t, typeof(ApiController)) &&
+                    ((ApiController?)t.GetCustomAttribute(typeof(ApiController)))?.ClassURI == uri)
+                .FirstOrDefault();
+        }
+
+        private static MethodInfo? FindMethodByURI(Type controller, string httpMethod, string methodURI)
+        {
+            return controller.GetMethods().Where(t => t.GetCustomAttributes(true)
+                .Any(attr => attr.GetType().Name == $"Http{httpMethod}"
+                    && Regex.IsMatch(methodURI, (((HttpRequest)attr).MethodURI == "") ? t.Name.ToLower() : ((HttpRequest)attr).MethodURI)))
+                .FirstOrDefault();
         }
 
         private static string GetRequestPostData(HttpListenerRequest request)

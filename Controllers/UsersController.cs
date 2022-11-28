@@ -26,10 +26,10 @@ namespace HttpServer
 
             var addCookieAction =
                 (HttpListenerResponse response) => {
-                    var cookie = new Cookie("SessionId", session.Guid.ToString());
-                    response.Cookies.Add(cookie);
+                    var cookie = new Cookie("SessionId", session.Guid.ToString(), "/");
 
-                    response.Redirect(@"/");
+                    response.Redirect(@"/main");
+                    response.Cookies.Add(cookie);
                 };
 
             return new ControllerResponse(true, action: addCookieAction);
@@ -41,7 +41,7 @@ namespace HttpServer
             userDAO.Insert(new User(login, password, HttpUtility.UrlDecode(name)));
 
             var redirectAction = (HttpListenerResponse response) => {
-                    response.Redirect(@"/");
+                    response.Redirect(@"/main");
                 };
 
             return new ControllerResponse(null, redirectAction);
