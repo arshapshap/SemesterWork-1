@@ -86,7 +86,7 @@ namespace HttpServer
                 strParams = postData.Split('&').Select(p => p.Split('=')[1]).ToArray();
             }
 
-            object[] queryParams = null;
+            object?[] queryParams = null;
 
             var sessionCookie = request.Cookies.Where(cookie => cookie.Name == "SessionId").FirstOrDefault();
             Guid? sessionId = null;
@@ -94,18 +94,8 @@ namespace HttpServer
                 SessionManager.Instance.CheckSession(Guid.Parse(sessionCookie.Value)))
                 sessionId = Guid.Parse(sessionCookie.Value);
 
-            /*
-            if (sessionCookie == null ||
-                !SessionManager.Instance.CheckSession(Guid.Parse(sessionCookie.Value)))
-            {
-                serverResponse = GetErrorServerResponse(HttpStatusCode.Unauthorized);
-                response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                return true;
-            }
-            */
-
-            var httpGetAttribute = (HttpGET)method.GetCustomAttribute(typeof(HttpGET));
-            if (httpGetAttribute?.OnlyForAuthorized == true)
+            var httpRequestAttribute = (HttpRequest)method.GetCustomAttribute(typeof(HttpRequest));
+            if (httpRequestAttribute?.OnlyForAuthorized == true)
             {
                 if (sessionId == null)
                 {
@@ -113,14 +103,14 @@ namespace HttpServer
                     response.StatusCode = (int)HttpStatusCode.Unauthorized;
                     return true;
                 }
-                if (httpGetAttribute?.NeedSessionId == true)
-                {
-                    queryParams = method.GetParameters()
-                            .Skip(1)
-                            .Select((p, i) => Convert.ChangeType(strParams[i], p.ParameterType))
-                            .Append(sessionId)
-                            .ToArray();
-                }
+            }
+            if (httpRequestAttribute?.NeedSessionId == true)
+            {
+                queryParams = method.GetParameters()
+                        .Skip(1)
+                        .Select((p, i) => Convert.ChangeType(strParams[i], p.ParameterType))
+                        .Prepend(sessionId)
+                        .ToArray();
             }
 
             if (queryParams == null)

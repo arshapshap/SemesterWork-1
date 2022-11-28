@@ -8,6 +8,6 @@ namespace HttpServer
 {
     class HttpPOST : HttpRequest
     {
-        public HttpPOST(string methodURI = "") : base(methodURI) { }
+        public HttpPOST(string methodURI = "", bool onlyForAuthorized = false, bool needSessionId = false) : base(methodURI, onlyForAuthorized, needSessionId) { }
     }
 }

@@ -20,29 +20,41 @@ namespace HttpServer
         {
             var user = userDAO.Select(login, password);
             if (user == null)
-                return new ControllerResponse(false);
+                return new ControllerResponse(new View("auth", new { incorrectPassword = true }));
 
             var session = SessionManager.Instance.CreateSession(user.Id, user.Login);
 
-            var addCookieAction =
-                (HttpListenerResponse response) => {
+            var action =
+                (HttpListenerResponse response) =>
+                {
                     var cookie = new Cookie("SessionId", session.Guid.ToString(), "/");
 
                     response.Redirect(@"/main");
                     response.Cookies.Add(cookie);
                 };
+            
 
-            return new ControllerResponse(true, action: addCookieAction);
+            return new ControllerResponse(true, action: action);
         }
 
         [HttpPOST("register")]
         public static ControllerResponse Register(string login, string name, string password)
         {
+            if (userDAO.Select(login) != null)
+                return new ControllerResponse(new View("register", new { IncorrectLogin = true, Login = login, Name = HttpUtility.UrlDecode(name), Password = password }));
+
             userDAO.Insert(new User(login, password, HttpUtility.UrlDecode(name)));
+            return Login(login, password);
+        }
+
+        [HttpGET("logout", needSessionId: true)]
+        public static ControllerResponse LogOut(Guid sessionId)
+        {
+            SessionManager.Instance.RemoveSession(sessionId);
 
             var redirectAction = (HttpListenerResponse response) => {
-                    response.Redirect(@"/main");
-                };
+                response.Redirect(@"/auth");
+            };
 
             return new ControllerResponse(null, redirectAction);
         }

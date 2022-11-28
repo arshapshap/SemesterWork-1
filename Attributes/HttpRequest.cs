@@ -9,9 +9,13 @@ namespace HttpServer
     abstract class HttpRequest : Attribute
     {
         public string MethodURI;
-        protected HttpRequest(string methodURI)
+        public readonly bool OnlyForAuthorized;
+        public readonly bool NeedSessionId;
+        protected HttpRequest(string methodURI, bool onlyForAuthorized, bool needSessionId)
         {
             MethodURI = methodURI;
+            OnlyForAuthorized = onlyForAuthorized;
+            NeedSessionId = needSessionId;
         }
     }
 }

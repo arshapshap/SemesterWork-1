@@ -24,6 +24,8 @@ namespace HttpServer
 
         public User? Select(int id) => orm.Select<User>(id);
 
+        public User? Select(string login) => orm.SelectWhere<User>(new Dictionary<string, object> { { "login", login } }).FirstOrDefault();
+
         public void Insert(User account) => orm.Insert(account);
 
         public void Update(int id, User account) => orm.Update(id, account);

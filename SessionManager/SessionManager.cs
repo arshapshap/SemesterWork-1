@@ -34,6 +34,8 @@ namespace HttpServer
             return session;
         }
 
+        public void RemoveSession(Guid guid) => cache.Remove(guid);
+
         public bool CheckSession(Guid guid) => cache.Get(guid) != null;
 
         public Session GetSession(Guid guid) => (Session)cache.Get(guid);
