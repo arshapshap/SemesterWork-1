@@ -4,28 +4,28 @@
 
 @font-face {
     font-family: 'Nunito-SemiBold';
-    src: url(/fonts/Nunito/Nunito-SemiBold.ttf);
+    src: url(~/fonts/Nunito/Nunito-SemiBold.ttf);
 }
 
 @font-face {
     font-family: 'Nunito-SemiBold';
     font-weight: bold;
-    src: url(/fonts/Nunito/Nunito-Bold.ttf);
+    src: url(~/fonts/Nunito/Nunito-Bold.ttf);
 }
 
 @font-face {
     font-family: 'Nunito-Bold';
-    src: url(/fonts/Nunito/Nunito-Bold.ttf);
+    src: url(~/fonts/Nunito/Nunito-Bold.ttf);
 }
 
 @font-face {
     font-family: 'Nunito-ExtraBold';
-    src: url(/fonts/Nunito/Nunito-ExtraBold.ttf);
+    src: url(~/fonts/Nunito/Nunito-ExtraBold.ttf);
 }
 
 @font-face {
     font-family: 'Nunito-Black';
-    src: url(/fonts/Nunito/Nunito-Black.ttf);
+    src: url(~/fonts/Nunito/Nunito-Black.ttf);
 }
 
 * {

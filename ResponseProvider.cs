@@ -18,9 +18,9 @@ namespace HttpServer
             HttpListenerResponse response = context.Response;
 
             (byte[] buffer, string contentType) serverResponse;
-            if (!TryHandleMethod(request, response, out serverResponse))
+            if (!TryHandleMethod(request, response, path, out serverResponse))
             {
-                string filePath = path + request.RawUrl.Replace("%20", " ");
+                string filePath = path + request.RawUrl.Replace("%20", " ").Split("~").Last();
                 if (!FileLoader.TryGetResponse(filePath, out serverResponse))
                 {
                     serverResponse = GetErrorServerResponse(HttpStatusCode.NotFound);
@@ -37,7 +37,7 @@ namespace HttpServer
             return response;
         }
 
-        private static bool TryHandleMethod(HttpListenerRequest request, HttpListenerResponse response, out (byte[] buffer, string contentType) serverResponse)
+        private static bool TryHandleMethod(HttpListenerRequest request, HttpListenerResponse response, string path, out (byte[] buffer, string contentType) serverResponse)
         {
 
             if (request.Url.Segments.Length < 2)
@@ -88,25 +88,37 @@ namespace HttpServer
 
             object[] queryParams = null;
 
+            var sessionCookie = request.Cookies.Where(cookie => cookie.Name == "SessionId").FirstOrDefault();
+            Guid? sessionId = null;
+            if (sessionCookie != null &&
+                SessionManager.Instance.CheckSession(Guid.Parse(sessionCookie.Value)))
+                sessionId = Guid.Parse(sessionCookie.Value);
+
+            /*
+            if (sessionCookie == null ||
+                !SessionManager.Instance.CheckSession(Guid.Parse(sessionCookie.Value)))
+            {
+                serverResponse = GetErrorServerResponse(HttpStatusCode.Unauthorized);
+                response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                return true;
+            }
+            */
+
             var httpGetAttribute = (HttpGET)method.GetCustomAttribute(typeof(HttpGET));
             if (httpGetAttribute?.OnlyForAuthorized == true)
             {
-                var sessionCookie = request.Cookies.Where(cookie => cookie.Name == "SessionId").FirstOrDefault();
-
-                if (sessionCookie == null ||
-                    !SessionManager.Instance.CheckSession(Guid.Parse(sessionCookie.Value)))
+                if (sessionId == null)
                 {
                     serverResponse = GetErrorServerResponse(HttpStatusCode.Unauthorized);
                     response.StatusCode = (int)HttpStatusCode.Unauthorized;
                     return true;
                 }
-
                 if (httpGetAttribute?.NeedSessionId == true)
                 {
                     queryParams = method.GetParameters()
                             .Skip(1)
                             .Select((p, i) => Convert.ChangeType(strParams[i], p.ParameterType))
-                            .Append(Guid.Parse(sessionCookie.Value))
+                            .Append(sessionId)
                             .ToArray();
                 }
             }
@@ -125,10 +137,19 @@ namespace HttpServer
                 response.StatusCode = (int)methodResponse.statusCode;
                 return true;
             }
-
-            serverResponse = (Encoding.ASCII.GetBytes(JsonSerializer.Serialize(methodResponse.response)), "application/json");
+            
+            if (methodResponse.response is View)
+            {
+                var view = (View)methodResponse.response;
+                if (sessionId != null)
+                    view.CurrentUser = UsersController.GetUserBySessionId(Guid.Parse(sessionCookie.Value));
+                serverResponse = (Encoding.UTF8.GetBytes(view.GetHTML(path)), "text/html");
+            }
+            else
+                serverResponse = (Encoding.ASCII.GetBytes(JsonSerializer.Serialize(methodResponse.response)), "application/json");
             return true;
         }
+
         private static string GetRequestPostData(HttpListenerRequest request)
         {
             if (!request.HasEntityBody)

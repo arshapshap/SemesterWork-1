@@ -1,0 +1,21 @@
+<div class="header-right">
+    {{ if user != null }}
+    <div class="user-info">
+        <div>{{user.name}} (<a href="/profile.html" class="link">{{user.login}}</a>)</div>
+        <a href="/auth.html" class="link">Выйти</a>
+    </div>
+    <a class="profile" href="/profile.html">
+        <img class="profile-image"
+            src="{{user.image}}">
+    </a>
+    {{ else }}
+    <div>
+        <a href="/auth.html" class="link">Войти</a>
+        или
+        <a href="/register.html" class="link">зарегистрироваться</a>
+    </div>
+    <a class="profile" href="/auth.html">
+        <img class="profile-image" src="~/img/profile.png">
+    </a>
+    {{ end }}
+</div>

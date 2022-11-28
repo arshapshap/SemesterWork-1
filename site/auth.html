@@ -17,7 +17,7 @@
                 <img class="profile-image" src="/img/home.png">
             </a>
         </div>
-        <form class="form" name="auth" method="POST" action="/auth/">
+        <form class="form" name="auth" method="POST" action="/profile/login">
             <div>
                 <div class="title">Войдите в аккаунт</div>
                 <div class="title-hint">Авторизуйтесь, чтобы оставлять комментарии и публиковать посты.</div>
@@ -25,11 +25,11 @@
             <div class="fields">
                 <div class="field">
                     <span class="field-title">Логин</span>
-                    <input class="field-input" type="text" id="login" required="required">
+                    <input class="field-input" type="text" id="login" name="login" required="required">
                 </div>
                 <div class="field">
                     <span class="field-title">Пароль</span>
-                    <input class="field-input" type="password" id="password" required="required">
+                    <input class="field-input" type="password" id="password" name="password" required="required">
                 </div>
             </div>
             <div class="remember-me">
