@@ -60,7 +60,7 @@ namespace HttpServer.Controllers
             return new ControllerResponse(null, action: redirectAction);
         }
 
-        [HttpGET(@"^\d$", needSessionId: true)]
+        [HttpGET(@"^\d*$", needSessionId: true)]
         public static ControllerResponse ShowPublication(Guid sessionId, int id)
         {
             var isAuthorized = SessionManager.Instance.CheckSession(sessionId);

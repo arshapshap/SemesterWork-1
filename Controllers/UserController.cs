@@ -59,7 +59,7 @@ namespace HttpServer.Controllers
             return new ControllerResponse(null, redirectAction);
         }
 
-        [HttpGET(@"^\d$")]
+        [HttpGET(@"^\d*$")]
         public static ControllerResponse ShowUserProfile(int id)
         {
             var user = userDAO.Select(id);

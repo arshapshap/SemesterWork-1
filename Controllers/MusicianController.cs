@@ -18,7 +18,7 @@ namespace HttpServer.Controllers
         static MusicianDAO musicianDAO
             = new MusicianDAO(MainController.DatabaseConnectionString);
 
-        [HttpGET(@"^\d$")]
+        [HttpGET(@"^\d*$")]
         public static ControllerResponse ShowMusician(int id)
         {
             var musician = musicianDAO.Select(id);

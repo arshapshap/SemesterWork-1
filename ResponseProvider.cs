@@ -28,18 +28,18 @@ namespace HttpServer
                 {
                     string filePath = sitePath + request.RawUrl.Replace("%20", " ").Split("~").Last();
                     if (!FileLoader.TryGetResponse(filePath, out serverResponse))
-                    {
-                        serverResponse = GetErrorServerResponse(HttpStatusCode.NotFound, sitePath);
-                        response.StatusCode = (int)HttpStatusCode.NotFound;
-                        Program.PrintMessage($"Ресурс не найден по следующему пути: {filePath}.");
-                    }
+                        throw new ServerException(HttpStatusCode.NotFound, $"Не найдено: {filePath}.");
                 }
             }
             catch (Exception ex)
             {
-                serverResponse = GetErrorServerResponse(HttpStatusCode.InternalServerError, sitePath);
-                response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                Program.PrintMessage("Произошла ошибка: " + ex.Message);
+                var statusCode = (ex is ServerException) ? ((ServerException)ex).StatusCode : HttpStatusCode.InternalServerError;
+
+                serverResponse = GetErrorServerResponse(statusCode, sitePath);
+                response.StatusCode = (int)statusCode;
+                
+                if (ex is not ServerException)
+                    Program.PrintMessage("Произошла ошибка: " + ex.Message);
             }
 
             response.Headers.Set("Content-Type", serverResponse.contentType);
@@ -84,11 +84,7 @@ namespace HttpServer
 
             var httpRequestAttribute = (HttpRequest)method.GetCustomAttribute(typeof(HttpRequest));
             if (httpRequestAttribute?.OnlyForAuthorized == true && sessionId == null)
-            {
-                serverResponse = GetErrorServerResponse(HttpStatusCode.Unauthorized, sitePath);
-                response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                return true;
-            }
+                throw new ServerException(HttpStatusCode.Unauthorized);
 
             if (httpRequestAttribute?.NeedSessionId == true)
                 queryParams = method.GetParameters()
@@ -104,11 +100,7 @@ namespace HttpServer
             var methodResponse = (ControllerResponse)method.Invoke(null, queryParams);
 
             if (methodResponse.statusCode != HttpStatusCode.OK)
-            {
-                serverResponse = GetErrorServerResponse(methodResponse.statusCode, sitePath);
-                response.StatusCode = (int)methodResponse.statusCode;
-                return true;
-            }
+                throw new ServerException(methodResponse.statusCode);
 
             methodResponse.action.Invoke(response);
 
