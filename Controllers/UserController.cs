@@ -80,6 +80,16 @@ namespace HttpServer.Controllers
             return ShowUserProfile(session.AccountId);
         }
 
+
+        [HttpGET("[a-zA-Z0-9_]+")]
+        public static ControllerResponse ShowUserProfile(string login)
+        {
+            var user = userDAO.Select(login);
+            if (user == null)
+                return new ControllerResponse(null, statusCode: HttpStatusCode.NotFound);
+
+            return ShowUserProfile(user.Id);
+        }
         public static User GetUserBySessionId(Guid sessionId)
         {
             var session = SessionManager.Instance.GetSession(sessionId);
@@ -91,11 +101,5 @@ namespace HttpServer.Controllers
             var user = userDAO.Select(id);
             return user;
         }
-        /*
-        [HttpGET("all", onlyForAuthorized: true)]
-        public ControllerResponse GetUsers()
-        {
-            return new ControllerResponse(userDAO.Select());
-        }*/
     }
 }

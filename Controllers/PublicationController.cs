@@ -43,6 +43,21 @@ namespace HttpServer.Controllers
             return new ControllerResponse(null, action: redirectAction);
         }
 
+        [HttpGET("delete", onlyForAuthorized: true, needSessionId: true)]
+        public static ControllerResponse Delete(Guid sessionId, int publicationId)
+        {
+            var user = UserController.GetUserBySessionId(sessionId);
+            var publication = publicationDAO.Select(publicationId);
+
+            if (user.Id == publication.AuthorId)
+                publicationDAO.Delete(publicationId);
+            
+            var redirectAction = (HttpListenerResponse response) =>
+                response.Redirect($"/main");
+
+            return new ControllerResponse(null, action: redirectAction);
+        }
+
         [HttpGET(@"\d", needSessionId: true)]
         public static ControllerResponse ShowPublication(Guid sessionId, int id)
         {

@@ -43,6 +43,10 @@
             </pre>
         </div>
 
+        {{ if current_user && (current_user.id == publication.author.id) }}
+        <a href="/publication/delete/{{publication.id}}" class="div-title link"><br>Удалить публикацию</a>
+        {{ end }}
+
         {{ if current_user }}
         <div class="rate">
             <div class="new-comment">
