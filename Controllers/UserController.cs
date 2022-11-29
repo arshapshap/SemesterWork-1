@@ -13,13 +13,13 @@ using System.Web;
 
 namespace HttpServer.Controllers
 {
-    [ApiController("profile")]
+    [ApiController("^profile$")]
     class UserController
     {
         static UserDAO userDAO 
             = new UserDAO(MainController.DatabaseConnectionString);
 
-        [HttpPOST("login")]
+        [HttpPOST("^login$")]
         public static ControllerResponse Login(string login, string password)
         {
             var user = userDAO.Select(login, HttpUtility.UrlDecode(password));
@@ -32,15 +32,14 @@ namespace HttpServer.Controllers
                 (HttpListenerResponse response) =>
                 {
                     var cookie = new Cookie("SessionId", session.Guid.ToString(), "/");
-
-                    response.Redirect(@"/main");
                     response.Cookies.Add(cookie);
+                    response.Redirect(@"/main");
                 };
 
             return new ControllerResponse(true, action: action);
         }
 
-        [HttpPOST("register")]
+        [HttpPOST("^register$")]
         public static ControllerResponse Register(string login, string name, string password)
         {
             if (userDAO.Select(login) != null)
@@ -50,19 +49,17 @@ namespace HttpServer.Controllers
             return Login(login, password);
         }
 
-        [HttpGET("logout", needSessionId: true)]
+        [HttpGET("^logout$", needSessionId: true)]
         public static ControllerResponse LogOut(Guid sessionId)
         {
             SessionManager.Instance.RemoveSession(sessionId);
 
-            var redirectAction = (HttpListenerResponse response) => {
-                response.Redirect(@"/auth");
-            };
+            var redirectAction = (HttpListenerResponse response) => response.Redirect(@"/auth");
 
             return new ControllerResponse(null, redirectAction);
         }
 
-        [HttpGET(@"\d")]
+        [HttpGET(@"^\d$")]
         public static ControllerResponse ShowUserProfile(int id)
         {
             var user = userDAO.Select(id);
@@ -81,7 +78,7 @@ namespace HttpServer.Controllers
         }
 
 
-        [HttpGET("[a-zA-Z0-9_]+")]
+        [HttpGET("^[a-zA-Z0-9_]+$")]
         public static ControllerResponse ShowUserProfile(string login)
         {
             var user = userDAO.Select(login);

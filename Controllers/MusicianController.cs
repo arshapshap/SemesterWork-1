@@ -12,13 +12,13 @@ using System.Web;
 
 namespace HttpServer.Controllers
 {
-    [ApiController("musician")]
+    [ApiController("^musician$")]
     internal class MusicianController
     {
         static MusicianDAO musicianDAO
             = new MusicianDAO(MainController.DatabaseConnectionString);
 
-        [HttpGET(@"\d")]
+        [HttpGET(@"^\d$")]
         public static ControllerResponse ShowMusician(int id)
         {
             var musician = musicianDAO.Select(id);

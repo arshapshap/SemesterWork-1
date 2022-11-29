@@ -12,20 +12,20 @@ using System.Web;
 
 namespace HttpServer.Controllers
 {
-    [ApiController("publication")]
+    [ApiController("^publication$")]
     internal class PublicationController
     {
         static PublicationDAO publicationDAO
             = new PublicationDAO(MainController.DatabaseConnectionString);
 
-        [HttpPOST("new-musician", onlyForAuthorized: true, needSessionId: true)]
+        [HttpPOST("^new-musician$", onlyForAuthorized: true, needSessionId: true)]
         public static ControllerResponse CreateWithMusician(Guid sessionId, string musicianName, string musicianBiography, string musicianImage, string title, string text)
         {
             MusicianController.Create(musicianName, musicianBiography, musicianImage);
             return Create(sessionId, musicianName, title, text);
         }
 
-        [HttpPOST("new", onlyForAuthorized: true, needSessionId: true)]
+        [HttpPOST("^new$", onlyForAuthorized: true, needSessionId: true)]
         public static ControllerResponse Create(Guid sessionId, string musicianName, string title, string text)
         {
             var user = UserController.GetUserBySessionId(sessionId);
@@ -37,13 +37,13 @@ namespace HttpServer.Controllers
             var publication = new Publication(user.Id, musician.Id, HttpUtility.UrlDecode(title), HttpUtility.UrlDecode(text), DateTime.Now);
             var publicationId = publicationDAO.Insert(publication);
 
-            var redirectAction = (HttpListenerResponse response) =>
-                response.Redirect($"/publication/{publicationId}");
+            var redirectAction = (HttpListenerResponse response) 
+                => response.Redirect($"/publication/{publicationId}");
 
             return new ControllerResponse(null, action: redirectAction);
         }
 
-        [HttpGET("delete", onlyForAuthorized: true, needSessionId: true)]
+        [HttpGET("^delete$", onlyForAuthorized: true, needSessionId: true)]
         public static ControllerResponse Delete(Guid sessionId, int publicationId)
         {
             var user = UserController.GetUserBySessionId(sessionId);
@@ -51,14 +51,16 @@ namespace HttpServer.Controllers
 
             if (user.Id == publication.AuthorId)
                 publicationDAO.Delete(publicationId);
+            else
+                new ControllerResponse(null, statusCode: HttpStatusCode.Forbidden);
             
-            var redirectAction = (HttpListenerResponse response) =>
-                response.Redirect($"/main");
+            var redirectAction = (HttpListenerResponse response) 
+                => response.Redirect($"/main");
 
             return new ControllerResponse(null, action: redirectAction);
         }
 
-        [HttpGET(@"\d", needSessionId: true)]
+        [HttpGET(@"^\d$", needSessionId: true)]
         public static ControllerResponse ShowPublication(Guid sessionId, int id)
         {
             var isAuthorized = SessionManager.Instance.CheckSession(sessionId);

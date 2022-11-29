@@ -14,11 +14,11 @@ namespace HttpServer.Controllers
     {
         public static readonly string DatabaseConnectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=SiteDB;Integrated Security=True";
 
-        [HttpGET(@"(main)|(popular)", needSessionId: true)]
+        [HttpGET("^(main|popular)$", needSessionId: true)]
         public static ControllerResponse ShowPopularPublications(Guid sessionId)
             => ShowMainPage(sessionId, showPopular: true);
 
-        [HttpGET("new", needSessionId: true)]
+        [HttpGET("^new$", needSessionId: true)]
         public static ControllerResponse ShowNewPublications(Guid sessionId)
             => ShowMainPage(sessionId, showPopular: false);
 
@@ -34,7 +34,7 @@ namespace HttpServer.Controllers
             return new ControllerResponse(view);
         }
 
-        [HttpGET("auth", needSessionId:true)]
+        [HttpGET("^auth$", needSessionId:true)]
         public static ControllerResponse ShowAuthPage(Guid sessionId)
         {
             if (SessionManager.Instance.CheckSession(sessionId))
@@ -51,7 +51,7 @@ namespace HttpServer.Controllers
             return new ControllerResponse(view);
         }
 
-        [HttpGET("register", needSessionId:true)]
+        [HttpGET("^register$", needSessionId:true)]
         public static ControllerResponse ShowRegisterPage(Guid sessionId)
         {
             if (SessionManager.Instance.CheckSession(sessionId))

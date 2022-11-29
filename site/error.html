@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="~/css/common.css">
+    <link rel="stylesheet" href="~/css/auth.css">
+    <title>Ошибка!</title>
+</head>
+
+<body class="body">
+    <div class="container">
+        <div class="header-left">
+            <a href="/main">
+                <img class="profile-image" src="~/img/home.png">
+            </a>
+        </div>
+        <div>
+            <div class="title">Ошибка {{ error_code}}</div>
+            <div class="title-hint">{{ error_description }}</div>
+        </div>
+    </div>
+</body>

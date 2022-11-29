@@ -1,7 +1,3 @@
-.for-users {
-    display: none !important;
-}
-
 @font-face {
     font-family: 'Nunito-SemiBold';
     src: url(~/fonts/Nunito/Nunito-SemiBold.ttf);

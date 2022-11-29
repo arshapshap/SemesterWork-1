@@ -78,6 +78,7 @@ namespace HttpServer
                 {
                     Program.PrintMessage("Произошла ошибка: " + ex.Message);
                     Stop();
+                    Start();
                 }
                 return;
             }

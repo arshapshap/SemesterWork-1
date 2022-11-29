@@ -5,6 +5,10 @@
     width: 636px;
 }
 
+.title, .title-hint {
+    text-align: center;
+}
+
 .home img {
     width: 60px;
     cursor: pointer;
