@@ -38,9 +38,7 @@ namespace HttpServer.Controllers
             var publicationId = publicationDAO.Insert(publication);
 
             var redirectAction = (HttpListenerResponse response) =>
-            {
                 response.Redirect($"/publication/{publicationId}");
-            };
 
             return new ControllerResponse(null, action: redirectAction);
         }
@@ -50,11 +48,15 @@ namespace HttpServer.Controllers
         {
             var isAuthorized = SessionManager.Instance.CheckSession(sessionId);
 
+            User? currentUser = null;
+            if (isAuthorized)
+                currentUser = UserController.GetUserBySessionId(sessionId);
+
             var publication = publicationDAO.Select(id);
             if (publication == null)
                 return new ControllerResponse(null, statusCode: HttpStatusCode.NotFound);
 
-            var view = new View("publication", new { IsAuthorized = isAuthorized, Publication = publication });
+            var view = new View("publication", new { CurrentUser = currentUser, Publication = publication });
             return new ControllerResponse(view);
         }
 
@@ -66,5 +68,7 @@ namespace HttpServer.Controllers
         }
 
         public static Publication[] GetUserPublications(int userId) => publicationDAO.SelectByUserId(userId);
+
+        public static Publication[] GetPublications() => publicationDAO.Select();
     }
 }

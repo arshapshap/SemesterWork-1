@@ -43,8 +43,16 @@
             </pre>
         </div>
 
-        {{ if is_authorized }}
+        {{ if current_user }}
         <div class="rate">
+            <div class="new-comment">
+                <div class="div-title">Оставьте комментарий:</div>
+                <form name="new-comment" method="POST" action="comment">
+                    <input class="field-input" name="comment" type="text"></input>
+                    <button class="button" type="submit">Отправить</button>
+                </form>
+            </div>
+            {{ if current_user.id != publication.author.id }}
             <div class="new-rating">
                 <div class="div-title">Оцените публикацию:</div>
                 <form name="new-rating" method="POST" action="rating">
@@ -61,13 +69,7 @@
                     <button class="button" type="submit">Отправить</button>
                 </form>
             </div>
-            <div class="new-comment">
-                <div class="div-title">Оставьте комментарий:</div>
-                <form name="new-comment" method="POST" action="comment">
-                    <input class="field-input" name="comment" type="text"></input>
-                    <button class="button" type="submit">Отправить</button>
-                </form>
-            </div>
+            {{ end }}
         </div>
         {{ end }}
 
