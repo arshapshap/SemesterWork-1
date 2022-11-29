@@ -28,7 +28,7 @@ namespace HttpServer.Controllers
 
             var ordered = (showPopular)
                 ? publications.OrderByDescending(p => p.Rating)
-                : publications.OrderByDescending(p => p.DateTime);
+                : publications.OrderByDescending(p => p.Id);
 
             var view = new View("main", new { ShowPopular = showPopular, IsAuthorized = SessionManager.Instance.CheckSession(sessionId), Publications = ordered });
             return new ControllerResponse(view);

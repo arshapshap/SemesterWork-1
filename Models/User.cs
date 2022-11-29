@@ -24,7 +24,7 @@ namespace HttpServer.Models
         [FieldDB("image")]
         public string Image { get; set; }
 
-        public Publication[] Publications { get => PublicationController.GetUserPublications(Id); }
+        public Publication[] Publications { get => PublicationController.GetUserPublications(Id).OrderByDescending(p => p.Rating).ToArray(); }
 
         public User(int id, string login, string password, string name, string image) : this(login, password, name, image)
         {

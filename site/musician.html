@@ -6,8 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="~/css/common.css">
     <link rel="stylesheet" href="~/css/publication.css">
+    <link rel="stylesheet" href="~/css/main.css">
     <link rel="stylesheet" href="~/css/profile.css">
-    <title>Музыкант</title>
+    <title>{{musician.name}}</title>
 </head>
 
 <body>
@@ -15,7 +16,7 @@
     <body class="body">
         <div class="container">
             <div class="header-left">
-                <a href="/main.html">
+                <a href="/main">
                     <img class="profile-image" src="~/img/home.png">
                 </a>
             </div>
@@ -23,74 +24,40 @@
             <div class="publication">
                 <div class="publication-header">
                     <img class="publication-image user-image"
-                        src="https://steamuserimages-a.akamaihd.net/ugc/845966259237811119/A9DBC5054F0D19D04EBC0E7CC08043E60286C8C2/?imw=512&amp;imh=512&amp;ima=fit&amp;impolicy=Letterbox&amp;imcolor=%23000000&amp;letterbox=true">
+                        src="{{musician.image}}">
                     <div class="publication-info">
                         <div class="publication-title">
-                            Linkin Park
+                            <b>{{ musician.name }}</b>
                         </div>
                         <div class="publication-author">
-                            Биография: что-то что-то что-то что-то что-то что-то что-то что-то что-то что-то что-то что-то что-то что-то что-то что-то что-то что-то что-то что-то что-то что-то что-то что-то что-то что-то что-то что-то что-то что-то 
+                            {{ musician.biography }} 
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="publications">
-                <div class="div-title">Публикации:</div>
-                <div class="publication publication-clickable publication-header" onclick="location.href='publication'">
+                <div class="div-title">Публикации песен <b>{{ musician.name }}</b>:</div>
+                {{ for publication in musician.publications }}
+                <div class="publication publication-clickable publication-header" onclick="location.href='/publication/{{publication.id}}'">
                     <img class="publication-image"
-                        src="https://steamuserimages-a.akamaihd.net/ugc/845966259237811119/A9DBC5054F0D19D04EBC0E7CC08043E60286C8C2/?imw=512&amp;imh=512&amp;ima=fit&amp;impolicy=Letterbox&amp;imcolor=%23000000&amp;letterbox=true">
+                        src="{{publication.musician.image}}">
                     <div class="publication-info">
-                        <div class="publication-title">Linkin Park - One More Light</div>
-                        <a href="author" class="publication-author link">Артём Шаповалов</a>
+                        <div class="publication-title">{{publication.musician.name}} - {{publication.title}}</div>
+                        <a href="/profile/{{publication.author.id}}" class="publication-author link">{{publication.author.name}}</a>
                     </div>
                     <div class="publication-ratings">
                         <div class="publication-rating">
-                            <span>5.0</span>
-                            <img src="/img/star.png">
+                            <span>{{publication.rating}}</span>
+                            <img src="~/img/star.png">
                         </div>
                         <div class="publication-comments">
-                            <span>10</span>
-                            <img src="/img/comment.png">
+                            <span>{{publication.comments.size}}</span>
+                            <img src="~/img/comment.png">
                         </div>
                     </div>
                 </div>
-                <div class="publication publication-clickable publication-header" onclick="location.href='publication'">
-                    <img class="publication-image"
-                        src="https://steamuserimages-a.akamaihd.net/ugc/845966259237811119/A9DBC5054F0D19D04EBC0E7CC08043E60286C8C2/?imw=512&amp;imh=512&amp;ima=fit&amp;impolicy=Letterbox&amp;imcolor=%23000000&amp;letterbox=true">
-                    <div class="publication-info">
-                        <div class="publication-title">Linkin Park - One More Light</div>
-                        <a href="author" class="publication-author link">Артём Шаповалов</a>
-                    </div>
-                    <div class="publication-ratings">
-                        <div class="publication-rating">
-                            <span>5.0</span>
-                            <img src="/img/star.png">
-                        </div>
-                        <div class="publication-comments">
-                            <span>10</span>
-                            <img src="/img/comment.png">
-                        </div>
-                    </div>
-                </div>
-                <div class="publication publication-clickable publication-header" onclick="location.href='publication'">
-                    <img class="publication-image"
-                        src="https://steamuserimages-a.akamaihd.net/ugc/845966259237811119/A9DBC5054F0D19D04EBC0E7CC08043E60286C8C2/?imw=512&amp;imh=512&amp;ima=fit&amp;impolicy=Letterbox&amp;imcolor=%23000000&amp;letterbox=true">
-                    <div class="publication-info">
-                        <div class="publication-title">Linkin Park - One More Light</div>
-                        <a href="author" class="publication-author link">Артём Шаповалов</a>
-                    </div>
-                    <div class="publication-ratings">
-                        <div class="publication-rating">
-                            <span>5.0</span>
-                            <img src="/img/star.png">
-                        </div>
-                        <div class="publication-comments">
-                            <span>10</span>
-                            <img src="/img/comment.png">
-                        </div>
-                    </div>
-                </div>
+                {{ end }}
             </div>
         </div>
     </body>

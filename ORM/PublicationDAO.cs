@@ -20,8 +20,6 @@ namespace HttpServer.ORM
 
         public Publication[] SelectWhere(Dictionary<string, object> conditions) => orm.SelectWhere<Publication>(conditions);
 
-        public Publication[] SelectByUserId(int userId) => SelectWhere(new Dictionary<string, object> { { "user_id", userId } });
-
         public Publication? Select(int id) => orm.Select<Publication>(id);
 
         public int Insert(Publication publication) => orm.Insert(publication);

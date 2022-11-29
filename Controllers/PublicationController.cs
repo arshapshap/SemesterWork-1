@@ -44,7 +44,7 @@ namespace HttpServer.Controllers
         }
 
         [HttpGET(@"\d", needSessionId: true)]
-        public static ControllerResponse ShowPublicationById(Guid sessionId, int id)
+        public static ControllerResponse ShowPublication(Guid sessionId, int id)
         {
             var isAuthorized = SessionManager.Instance.CheckSession(sessionId);
 
@@ -67,7 +67,9 @@ namespace HttpServer.Controllers
             return new ControllerResponse(view);
         }
 
-        public static Publication[] GetUserPublications(int userId) => publicationDAO.SelectByUserId(userId);
+        public static Publication[] GetUserPublications(int userId) => publicationDAO.SelectWhere(new Dictionary<string, object> { { "user_id", userId } });
+
+        public static Publication[] GetMusicianPublications(int musicianId) => publicationDAO.SelectWhere(new Dictionary<string, object> { { "musician_id", musicianId } });
 
         public static Publication[] GetPublications() => publicationDAO.Select();
     }
