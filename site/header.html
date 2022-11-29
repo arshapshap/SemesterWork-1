@@ -1,20 +1,20 @@
 <div class="header-right">
-    {{ if user != null }}
+    {{ if user }}
     <div class="user-info">
-        <div>{{user.name}} (<a href="/profile.html" class="link">{{user.login}}</a>)</div>
-        <a href="/auth.html" class="link">Выйти</a>
+        <div>{{user.name}} (<a href="/profile" class="link">{{user.login}}</a>)</div>
+        <a href="/profile/logout" class="link">Выйти</a>
     </div>
-    <a class="profile" href="/profile.html">
+    <a class="profile" href="/profile">
         <img class="profile-image"
             src="{{user.image}}">
     </a>
     {{ else }}
     <div>
-        <a href="/auth.html" class="link">Войти</a>
+        <a href="/auth" class="link">Войти</a>
         или
-        <a href="/register.html" class="link">зарегистрироваться</a>
+        <a href="/register" class="link">зарегистрироваться</a>
     </div>
-    <a class="profile" href="/auth.html">
+    <a class="profile" href="/auth">
         <img class="profile-image" src="~/img/profile.png">
     </a>
     {{ end }}

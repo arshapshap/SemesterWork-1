@@ -1,4 +1,5 @@
-﻿using Scriban;
+﻿using HttpServer.Models;
+using Scriban;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,8 @@ namespace HttpServer
             this.templateFileName = templateFileName;
             this.model = model;
         }
+
+        public View(string templateFileName) : this(templateFileName, new { }) { }
 
         public string GetHTML(string path)
         {

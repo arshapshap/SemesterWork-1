@@ -1,10 +1,11 @@
-﻿using System;
+﻿using HttpServer.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HttpServer
+namespace HttpServer.ORM
 {
     internal class UserDAO
     {
@@ -26,7 +27,7 @@ namespace HttpServer
 
         public User? Select(string login) => orm.SelectWhere<User>(new Dictionary<string, object> { { "login", login } }).FirstOrDefault();
 
-        public void Insert(User account) => orm.Insert(account);
+        public int Insert(User account) => orm.Insert(account);
 
         public void Update(int id, User account) => orm.Update(id, account);
 

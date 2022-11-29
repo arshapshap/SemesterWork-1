@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="~/css/common.css">
+    <link rel="stylesheet" href="~/css/main.css">
+    <link rel="stylesheet" href="~/css/new-publication.css">
+    <title>Новая публикация</title>
+</head>
+<script>
+    function auto_height(textarea_id) {
+        textarea = document.getElementById(textarea_id)
+        textarea.style.height = "1px";
+        textarea.style.height = (textarea.scrollHeight - 3) + "px";
+    }
+</script>
+
+<body class="body" onload="auto_height('text-textarea'); {{ if new_musician }}auto_height('biography-textarea');{{ end }}">
+    <div class="container">
+        <div class="header-left">
+            <a href="/main">
+                <img class="profile-image" src="~/img/home.png">
+            </a>
+        </div>
+        *HEADER*
+        <div class="center title">Новая публикация</div>
+        <form class="form" name="new-publication" method="POST" action="{{ if new_musician }}/publication/new-musician{{ else }}/publication/new{{ end }}">
+            <div class="field-title">Исполнитель:</div>
+            <input class="field-input" value="{{musician_name}}" name="musician" type="text" required="required">
+            {{ if new_musician }}
+            <div class="title-hint">Этого исполнителя ещё нет в базе. Укажите информацию о нём:</div>
+            <div class="field-title">Краткая биография:</div>
+            <textarea id="biography-textarea" class="textarea field-input" name="biography" type="text" required="required" oninput="auto_height('biography-textarea')"></textarea>
+            <div class="field-title">Изображение (ссылка):</div>
+            <input class="field-input" name="image" type="text" required="required">
+            <div class="title-hint"></div>
+            {{ end }}
+            <div class="field-title">Название:</div>
+            <input class="field-input" value="{{title}}" name="title" type="text" required="required">
+            <div class="field-title">Текст:</div>
+            <textarea id="text-textarea" class="textarea field-input" name="text" type="text" required="required"
+                oninput="auto_height('text-textarea')">{{text}}</textarea>
+            <div class="center">
+                <button class="button" type="submit">Опубликовать</button>
+            </div>
+        </form>
+    </div>
+</body>
+
+</html>

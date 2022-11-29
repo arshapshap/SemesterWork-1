@@ -10,6 +10,7 @@ namespace HttpServer
 
             Console.WriteLine("[ Доступные команды: start, stop, restart. ]");
             PrintMessage("Сервер готов к запуску.");
+            httpServer.Start();
             while (true)
             {
                 var input = Console.ReadLine();

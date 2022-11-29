@@ -1,4 +1,7 @@
-﻿using System;
+﻿using HttpServer.Attributes;
+using HttpServer.Controllers;
+using HttpServer.SessionsService;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -132,7 +135,7 @@ namespace HttpServer
             {
                 var view = (View)methodResponse.response;
                 if (sessionId != null)
-                    view.CurrentUser = UsersController.GetUserBySessionId(Guid.Parse(sessionCookie.Value));
+                    view.CurrentUser = UserController.GetUserBySessionId(Guid.Parse(sessionCookie.Value));
                 serverResponse = (Encoding.UTF8.GetBytes(view.GetHTML(path)), "text/html");
             }
             else

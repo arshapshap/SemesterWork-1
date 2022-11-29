@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="~/css/publication.css">
     <link rel="stylesheet" href="~/css/main.css">
     <link rel="stylesheet" href="~/css/profile.css">
-    <title>Профиль</title>
+    <title>{{ name }}</title>
 </head>
 
 <body>
@@ -16,83 +16,48 @@
     <body class="body">
         <div class="container">
             <div class="header-left">
-                <a href="~/main.html">
+                <a href="/main">
                     <img class="profile-image" src="~/img/home.png">
                 </a>
             </div>
             *HEADER*
             <div class="publication">
                 <div class="publication-header">
-                    <img class="publication-image user-image"
-                        src="{{image}}">
+                    <img class="publication-image user-image" src="{{image}}">
                     <div class="publication-info">
                         <div class="publication-title">
-                            <a class="link">{{login}}</a>
+                            <a class="link login-link">{{login}}</a>
                             <br>{{name}}
-                        </div>
-                        <div class="publication-author">
-                            Дата последней активности: 21.11.2022
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="publications">
+                {{ if publications }}
                 <div class="div-title">Публикации пользователя:</div>
-                <div class="publication publication-clickable publication-header" onclick="location.href='publication'">
+                {{ for publication in publications }}
+                <div class="publication publication-clickable publication-header" onclick="location.href='/publication/{{publication.id}}'">
                     <img class="publication-image"
-                        src="https://steamuserimages-a.akamaihd.net/ugc/845966259237811119/A9DBC5054F0D19D04EBC0E7CC08043E60286C8C2/?imw=512&amp;imh=512&amp;ima=fit&amp;impolicy=Letterbox&amp;imcolor=%23000000&amp;letterbox=true">
+                        src="{{publication.musician.image}}">
                     <div class="publication-info">
-                        <div class="publication-title">Linkin Park - One More Light</div>
-                        <a href="author" class="publication-author link">Артём Шаповалов</a>
+                        <div class="publication-title">{{ publication.musician.name }} - {{ publication.title }}</div>
                     </div>
                     <div class="publication-ratings">
                         <div class="publication-rating">
-                            <span>5.0</span>
+                            <span>{{ publication.rating }}</span>
                             <img src="~/img/star.png">
                         </div>
                         <div class="publication-comments">
-                            <span>10</span>
+                            <span>{{ publication.comments.size }}</span>
                             <img src="~/img/comment.png">
                         </div>
                     </div>
                 </div>
-                <div class="publication publication-clickable publication-header" onclick="location.href='publication'">
-                    <img class="publication-image"
-                        src="https://steamuserimages-a.akamaihd.net/ugc/845966259237811119/A9DBC5054F0D19D04EBC0E7CC08043E60286C8C2/?imw=512&amp;imh=512&amp;ima=fit&amp;impolicy=Letterbox&amp;imcolor=%23000000&amp;letterbox=true">
-                    <div class="publication-info">
-                        <div class="publication-title">Linkin Park - One More Light</div>
-                        <a href="author" class="publication-author link">Артём Шаповалов</a>
-                    </div>
-                    <div class="publication-ratings">
-                        <div class="publication-rating">
-                            <span>5.0</span>
-                            <img src="~/img/star.png">
-                        </div>
-                        <div class="publication-comments">
-                            <span>10</span>
-                            <img src="~/img/comment.png">
-                        </div>
-                    </div>
-                </div>
-                <div class="publication publication-clickable publication-header" onclick="location.href='publication'">
-                    <img class="publication-image"
-                        src="https://steamuserimages-a.akamaihd.net/ugc/845966259237811119/A9DBC5054F0D19D04EBC0E7CC08043E60286C8C2/?imw=512&amp;imh=512&amp;ima=fit&amp;impolicy=Letterbox&amp;imcolor=%23000000&amp;letterbox=true">
-                    <div class="publication-info">
-                        <div class="publication-title">Linkin Park - One More Light</div>
-                        <a href="author" class="publication-author link">Артём Шаповалов</a>
-                    </div>
-                    <div class="publication-ratings">
-                        <div class="publication-rating">
-                            <span>5.0</span>
-                            <img src="~/img/star.png">
-                        </div>
-                        <div class="publication-comments">
-                            <span>10</span>
-                            <img src="~/img/comment.png">
-                        </div>
-                    </div>
-                </div>
+                {{ end }}
+                {{ else }}
+                <div class="div-title">Пользователь ничего не публиковал</div>
+                {{ end }}
             </div>
         </div>
     </body>

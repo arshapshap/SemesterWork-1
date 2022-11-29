@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HttpServer.Attributes;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Dynamic;
@@ -7,7 +8,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HttpServer
+namespace HttpServer.ORM
 {
     internal class MyORM
     {
@@ -79,21 +80,25 @@ namespace HttpServer
 
         public T? Select<T>(int id) => SelectWhere<T>(new Dictionary<string, object>() { { "id", id } }).FirstOrDefault();
 
-        public void Insert<T>(T item)
+        public int Insert<T>(T item)
         {
             var properties = typeof(T)
                 .GetProperties(BindingFlags.Public | BindingFlags.Instance)
                 .Where(p => p.GetCustomAttribute(typeof(FieldDB)) != null)
-                .ToDictionary(p => ((FieldDB)p.GetCustomAttribute(typeof(FieldDB))).ColumnName, p => $"{(((FieldDB)p.GetCustomAttribute(typeof(FieldDB))).IsCyrillic ? "N" : "")}'{p.GetValue(item)}'");
+                .ToDictionary(p => ((FieldDB)p.GetCustomAttribute(typeof(FieldDB))).ColumnName, p => $"{(((FieldDB)p.GetCustomAttribute(typeof(FieldDB))).IsCyrillic ? "N" : "")}'{p.GetValue(item).ToString().Replace("'", "''")}'");
 
-            string sqlExpression = $"INSERT INTO [dbo].[{TableName}]({string.Join(',', properties.Keys)}) VALUES ({string.Join(',', properties.Values)})";
+            string sqlExpression = $"INSERT INTO [dbo].[{TableName}]({string.Join(',', properties.Keys)}) OUTPUT inserted.id AS 'id' VALUES ({string.Join(',', properties.Values)})";
+
+            int insertedId = 0;
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand(sqlExpression, connection);
-                command.ExecuteNonQuery();
+                insertedId = (int)command.ExecuteScalar();
             }
+
+            return insertedId;
         }
 
         public void Update<T>(int id, T item)

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.Json;
 
-namespace HttpServer
+namespace HttpServer.SettingsService
 {
     static class SettingsDeserializer
     {

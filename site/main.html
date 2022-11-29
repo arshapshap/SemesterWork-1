@@ -11,16 +11,15 @@
 
 <body class="body">
     <div class="container">
-        <div class="header-left">
-            <a href="/main.html">
-                <img class="profile-image" src="~/img/home.png">
-            </a>
-        </div>
         *HEADER*
         <div class="categories">
             <a class="selected-link">Популярные публикации</a>
             |
             <a href="" class="link">Новые публикации</a>
+            {{ if user }}
+            |
+            <a href="/publication" class="link">Создать публикацию</a>
+            {{ end }}
         </div>
         <div class="publications">
             <div class="publication publication-clickable publication-header" onclick="location.href='publication'">
@@ -69,11 +68,11 @@
                 <div class="publication-ratings">
                     <div class="publication-rating">
                         <span>5.0</span>
-                        <img src="/img/star.png">
+                        <img src="~/img/star.png">
                     </div>
                     <div class="publication-comments">
                         <span>10</span>
-                        <img src="/img/comment.png">
+                        <img src="~/img/comment.png">
                     </div>
                 </div>
             </div>

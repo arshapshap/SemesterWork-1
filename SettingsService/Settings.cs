@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace HttpServer
+namespace HttpServer.SettingsService
 {
     class Settings
     {

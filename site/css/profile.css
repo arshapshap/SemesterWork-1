@@ -5,3 +5,11 @@
 .user-image {
     width: 160px;
 }
+
+.container {
+    padding-top: 42px;
+}
+
+.login-link {
+    cursor: default;
+}

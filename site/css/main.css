@@ -1,6 +1,6 @@
 .container {
     margin: 112px auto 20px;
-    padding: 0 42px;
+    padding: 0 42px 42px;
 }
 
 .categories {
@@ -13,7 +13,6 @@
 }
 
 .publications {
-    margin-bottom: 46px;
     display: flex;
     flex-direction: column;
     justify-content: center;

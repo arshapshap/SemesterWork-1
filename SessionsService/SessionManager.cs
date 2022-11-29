@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HttpServer
+namespace HttpServer.SessionsService
 {
     internal class SessionManager
     {
@@ -28,7 +28,7 @@ namespace HttpServer
         public Session CreateSession(int accountId, string login)
         {
             var session = new Session(Guid.NewGuid(), accountId, login, DateTime.Now);
-            var cacheEntryOptions = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromSeconds(120));
+            var cacheEntryOptions = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromSeconds(10*60));
             cache.Set(session.Guid, session, cacheEntryOptions);
 
             return session;

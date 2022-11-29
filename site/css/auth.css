@@ -46,16 +46,6 @@
     }
 }
 
-.title {
-    font-family: 'Nunito-ExtraBold';
-    font-size: 39px;
-}
-
-.title-hint {
-    font-size: 16px;
-    margin-bottom: 28px;
-}
-
 .remember-me {
     display: flex;
     align-items: center;
@@ -78,9 +68,8 @@
     height: 14px;
 }
 
-#password-confirm-hint, #correct-login-hint, #correct-name-hint {
+.js-hint {
     display: none;
-    color: var(--primary-dark-color);
 }
 
 .checkbox {

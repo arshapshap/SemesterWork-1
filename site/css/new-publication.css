@@ -1,0 +1,23 @@
+.field-input {
+    width: 100%;
+}
+
+.textarea {
+    overflow: hidden;
+    resize: none;
+}
+
+.title-hint {
+    margin-top: 28px;
+    margin-bottom: 0;
+}
+
+.container {
+    padding-top: 42px;
+}
+
+.center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
