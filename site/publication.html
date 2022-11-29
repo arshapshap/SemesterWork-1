@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="~/css/common.css">
     <link rel="stylesheet" href="~/css/publication.css">
-    <title>{{ publication.musician_name }} - {{ publication.title }} (Аккорды)</title>
+    <title>{{ publication.musician.name }} - {{ publication.title }} (Аккорды)</title>
 </head>
 
 <body class="body">
@@ -74,7 +74,7 @@
         {{ end }}
 
         <div class="comments">
-            {{ if publication.comments }}
+            {{ if publication.comments.size > 0 }}
             <div class="div-title">Комментарии:</div>
             {{ for comment in publication.comments }}
             <div class="publication comment">

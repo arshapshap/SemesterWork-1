@@ -55,7 +55,7 @@ namespace HttpServer.ORM
         {
             var result = new List<T>();
 
-            var stringConditions = conditions.Select(c => $"{c.Key}='{c.Value}'");
+            var stringConditions = conditions.Select(c => $"{c.Key}=N'{c.Value}'");
             string sqlExpression = $"SELECT * FROM [dbo].[{TableName}] WHERE {string.Join(" AND ", stringConditions)}";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {

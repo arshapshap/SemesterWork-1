@@ -22,7 +22,7 @@ namespace HttpServer.Controllers
         [HttpPOST("login")]
         public static ControllerResponse Login(string login, string password)
         {
-            var user = userDAO.Select(login, password);
+            var user = userDAO.Select(login, HttpUtility.UrlDecode(password));
             if (user == null)
                 return new ControllerResponse(new View("auth", new { IncorrectPassword = true, Login = login }));
 
@@ -36,7 +36,6 @@ namespace HttpServer.Controllers
                     response.Redirect(@"/main");
                     response.Cookies.Add(cookie);
                 };
-            
 
             return new ControllerResponse(true, action: action);
         }
@@ -47,7 +46,7 @@ namespace HttpServer.Controllers
             if (userDAO.Select(login) != null)
                 return new ControllerResponse(new View("register", new { IncorrectLogin = true, Login = login, Name = HttpUtility.UrlDecode(name) }));
 
-            userDAO.Insert(new User(login, password, HttpUtility.UrlDecode(name)));
+            userDAO.Insert(new User(login, HttpUtility.UrlDecode(password), HttpUtility.UrlDecode(name)));
             return Login(login, password);
         }
 

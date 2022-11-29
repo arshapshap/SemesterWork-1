@@ -31,7 +31,7 @@ namespace HttpServer.Models
             Id = id;
         }
 
-        public User(string login, string password, string name, string image = "")
+        public User(string login, string password, string name, string image = "~/img/profile.png")
         {
             Login = login;
             Password = password;

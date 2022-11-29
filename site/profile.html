@@ -34,7 +34,7 @@
             </div>
 
             <div class="publications">
-                {{ if publications }}
+                {{ if publications.size > 0 }}
                 <div class="div-title">Публикации пользователя:</div>
                 {{ for publication in publications }}
                 <div class="publication publication-clickable publication-header" onclick="location.href='/publication/{{publication.id}}'">
@@ -56,7 +56,7 @@
                 </div>
                 {{ end }}
                 {{ else }}
-                <div class="div-title">Пользователь ничего не публиковал</div>
+                <div class="div-title">Пользователь ничего не публиковал.</div>
                 {{ end }}
             </div>
         </div>
