@@ -64,10 +64,11 @@
                     <button class="button" type="submit">Отправить</button>
                 </form>
             </div>
-            {{ if current_user.id != publication.author.id }}
+            {{ if is_rating_available }}
             <div class="new-rating">
                 <div class="div-title">Оцените публикацию:</div>
-                <form class="form" name="new-rating" method="POST" action="rating">
+                <form class="form" name="new-rating" method="POST" action="/rating/">
+                    <input type="hidden" name="publication_id" value="{{ publication.id }}">
                     <div>
                         <input name="rating" id="rating-1" type="radio" value="1">
                         <label for="rating-1">1</label>

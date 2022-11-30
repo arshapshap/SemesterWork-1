@@ -13,6 +13,7 @@ namespace HttpServer.Models
         {
             PublicationId = publicationId;
             AuthorId = userId;
+            Points = rating;
             DateTime = date;
         }
 
@@ -20,11 +21,11 @@ namespace HttpServer.Models
         [FieldDB("publication_id")]
         public int PublicationId { get; }
 
-        [FieldDB("author_id")]
+        [FieldDB("user_id")]
         public int AuthorId { get; }
 
         [FieldDB("rating")]
-        public int RatingInPoints { get; }
+        public int Points { get; }
 
         [FieldDB("date")]
         public string SqlDate { get => DateTime.ToString("yyyy-MM-dd"); }

@@ -73,7 +73,9 @@ namespace HttpServer.Controllers
             if (publication == null)
                 return new ControllerResponse(null, statusCode: HttpStatusCode.NotFound);
 
-            var view = new View("publication", new { CurrentUser = currentUser, Publication = publication });
+            var isRatingAvailable = !(isAuthorized && (publication.AuthorId != currentUser.Id || RatingController.GetRating(id, currentUser.Id) == null));
+
+            var view = new View("publication", new { CurrentUser = currentUser, Publication = publication, IsRatingAvailable = isRatingAvailable });
             return new ControllerResponse(view);
         }
 
@@ -88,6 +90,7 @@ namespace HttpServer.Controllers
 
         public static Publication[] GetMusicianPublications(int musicianId) => publicationDAO.SelectWhere(new Dictionary<string, object> { { "musician_id", musicianId } });
 
+        public static Publication? GetPublication(int id) => publicationDAO.Select(id);
         public static Publication[] GetPublications() => publicationDAO.Select();
     }
 }

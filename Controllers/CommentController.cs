@@ -18,9 +18,13 @@ namespace HttpServer.Controllers
             = new CommentDAO(MainController.DatabaseConnectionString);
 
         [HttpPOST("^$", onlyForAuthorized: true, needSessionId: true)]
-        public static ControllerResponse CreateComment(Guid sessionId, int publicationId, string text)
+        public static ControllerResponse Create(Guid sessionId, int publicationId, string text)
         {
             var user = UserController.GetUserBySessionId(sessionId);
+            var publication = PublicationController.GetPublication(publicationId);
+
+            if (publication == null)
+                return new ControllerResponse(null, statusCode: HttpStatusCode.NotFound);
 
             var comment = new Comment(publicationId, user.Id, HttpUtility.UrlDecode(text), DateTime.Now);
             commentDAO.Insert(comment);

@@ -80,14 +80,14 @@ namespace HttpServer.ORM
 
         public T? Select<T>(int id) => SelectWhere<T>(new Dictionary<string, object>() { { "id", id } }).FirstOrDefault();
 
-        public int Insert<T>(T item)
+        public int Insert<T>(T item, bool idExists = true)
         {
             var properties = typeof(T)
                 .GetProperties(BindingFlags.Public | BindingFlags.Instance)
                 .Where(p => p.GetCustomAttribute(typeof(FieldDB)) != null)
                 .ToDictionary(p => ((FieldDB)p.GetCustomAttribute(typeof(FieldDB))).ColumnName, p => $"{(((FieldDB)p.GetCustomAttribute(typeof(FieldDB))).IsCyrillic ? "N" : "")}'{p.GetValue(item).ToString().Replace("'", "''")}'");
 
-            string sqlExpression = $"INSERT INTO [dbo].[{TableName}]({string.Join(',', properties.Keys)}) OUTPUT inserted.id AS 'id' VALUES ({string.Join(',', properties.Values)})";
+            string sqlExpression = $"INSERT INTO [dbo].[{TableName}]({string.Join(',', properties.Keys)}) {((idExists) ? "OUTPUT inserted.id AS 'id'" : "")} VALUES ({string.Join(',', properties.Values)})";
 
             int insertedId = 0;
 
@@ -95,7 +95,10 @@ namespace HttpServer.ORM
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand(sqlExpression, connection);
-                insertedId = (int)command.ExecuteScalar();
+                if (idExists)
+                    insertedId = (int)command.ExecuteScalar();
+                else
+                    command.ExecuteNonQuery();
             }
 
             return insertedId;
