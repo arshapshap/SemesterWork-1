@@ -1,5 +1,6 @@
 ﻿using HttpServer.Attributes;
 using HttpServer.SessionsService;
+using HttpServer.TemplateService;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,7 +31,9 @@ namespace HttpServer.Controllers
                 ? publications.OrderByDescending(p => p.Rating)
                 : publications.OrderByDescending(p => p.Id);
 
-            var view = new View("main", new { ShowPopular = showPopular, IsAuthorized = SessionManager.Instance.CheckSession(sessionId), Publications = ordered });
+            var currentUser = UserController.GetUserBySessionId(sessionId);
+
+            var view = new View("pages/main", new { ShowPopular = showPopular, CurrentUser = currentUser, Publications = ordered });
             return new ControllerResponse(view);
         }
 
@@ -47,7 +50,7 @@ namespace HttpServer.Controllers
                 return new ControllerResponse(null, action: redirectAction);
             }
 
-            var view = new View("auth");
+            var view = new View("pages/auth", new { EnteredInfo = new { }});
             return new ControllerResponse(view);
         }
 
@@ -64,7 +67,7 @@ namespace HttpServer.Controllers
                 return new ControllerResponse(null, action: redirectAction);
             }
 
-            var view = new View("register");
+            var view = new View("pages/register", new { EnteredInfo = new { } });
             return new ControllerResponse(view);
         }
     }

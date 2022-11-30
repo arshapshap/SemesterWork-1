@@ -2,6 +2,7 @@
 using HttpServer.Models;
 using HttpServer.ORM;
 using HttpServer.SessionsService;
+using HttpServer.TemplateService;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,14 +19,16 @@ namespace HttpServer.Controllers
         static MusicianDAO musicianDAO
             = new MusicianDAO(MainController.DatabaseConnectionString);
 
-        [HttpGET(@"^\d*$")]
-        public static ControllerResponse ShowMusician(int id)
+        [HttpGET(@"^\d+$", needSessionId: true)]
+        public static ControllerResponse ShowMusician(Guid sessionId, int id)
         {
+            var currentUser = UserController.GetUserBySessionId(sessionId);
+
             var musician = musicianDAO.Select(id);
             if (musician == null)
                 return new ControllerResponse(null, statusCode: HttpStatusCode.NotFound);
 
-            var view = new View("musician", new { Musician = musician });
+            var view = new View("pages/musician", new { Musician = musician, CurrentUser = currentUser });
             return new ControllerResponse(view);
         }
 

@@ -24,7 +24,7 @@
             <div class="fields">
                 <div class="field">
                     <span class="field-title">Логин</span>
-                    <input class="field-input" type="text" id="login" value="{{ login }}" name="login" required="required" maxlength="50" onchange="check_login(this)">
+                    <input class="field-input" type="text" id="login" value="{{ entered_info.login }}" name="login" required="required" maxlength="50" onchange="check_login(this)">
                     <div id="correct-login-hint" class="js-hint field-hint">Логин может содержать только латинские буквы, цифры и нижнее подчеркивание</div>
                     <div id="system-login-hint" class="js-hint field-hint">Этот логин зарезервирован системой</div>
                     {{ if incorrect_login }}
@@ -33,7 +33,7 @@
                 </div>
                 <div class="field">
                     <span class="field-title">Имя и фамилия</span>
-                    <input class="field-input" type="text" id="name" value="{{ name }}" name="name" required="required" maxlength="50" onchange="check_name(this)">
+                    <input class="field-input" type="text" id="name" value="{{ entered_info.name }}" name="name" required="required" maxlength="50" onchange="check_name(this)">
                     <div id="correct-name-hint" class="js-hint field-hint">Имя может содержать только кириллицу</div>
                 </div>
                 <div class="field">
@@ -48,7 +48,7 @@
             </div>
             <div class="remember-me">
                 <div>
-                    <input class="checkbox-hided" type="checkbox" id="remember-me"></input>
+                    <input class="checkbox-hided" type="checkbox" id="remember-me">
                     <div class="checkbox">
                         <img class="checkmark" src="~/img/checkmark.png">
                     </div>

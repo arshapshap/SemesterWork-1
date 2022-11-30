@@ -1,12 +1,13 @@
 <div class="header-right">
-    {{ if user }}
+    {{ if current_user }}
     <div class="user-info">
-        <div>{{user.name}} (<a href="/profile" class="link">{{user.login}}</a>)</div>
-        <a href="/profile/logout" class="link">Выйти</a>
+        <div>{{current_user.name}} (<a href="/profile" class="link">{{current_user.login}}</a>)</div>
+        <form id="logout" method="POST" action="/profile/logout"></form>
+        <a href="#" class="link" onclick="document.getElementById('logout').submit(); return false;">Выйти</a>
     </div>
     <a class="profile" href="/profile">
         <img class="profile-image"
-            src="{{user.image}}">
+            src="{{current_user.image}}">
     </a>
     {{ else }}
     <div>

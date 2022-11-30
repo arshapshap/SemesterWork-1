@@ -1,6 +1,7 @@
 ﻿using HttpServer.Attributes;
 using HttpServer.Controllers;
 using HttpServer.SessionsService;
+using HttpServer.TemplateService;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -55,6 +56,7 @@ namespace HttpServer
             serverResponse = (new byte[0], "");
             if (request.Url.AbsolutePath.Contains('~'))
                 return false;
+
             if (request.Url.Segments.Length < 2)
             {
                 response.Redirect(@"/main");
@@ -76,24 +78,22 @@ namespace HttpServer
             if (request.HttpMethod == "POST")
             {
                 var postData = GetRequestPostData(request);
-                strParams = postData.Split('&').Select(p => p.Split('=')[1]).ToArray();
+                strParams = (postData != null) ? postData.Split('&').Select(p => p.Split('=')[1]).ToArray() : new string[0];
             }
 
-            object?[] queryParams = null;
             Guid? sessionId = GetSessionId(request);
 
             var httpRequestAttribute = (HttpRequest)method.GetCustomAttribute(typeof(HttpRequest));
             if (httpRequestAttribute?.OnlyForAuthorized == true && sessionId == null)
                 throw new ServerException(HttpStatusCode.Unauthorized);
 
-            if (httpRequestAttribute?.NeedSessionId == true)
-                queryParams = method.GetParameters()
+            var queryParams = (httpRequestAttribute?.NeedSessionId == true) 
+                ? method.GetParameters()
                         .Skip(1)
                         .Select((p, i) => Convert.ChangeType(strParams[i], p.ParameterType))
                         .Prepend(sessionId)
-                        .ToArray();
-            else
-                queryParams = method.GetParameters()
+                        .ToArray()
+                : method.GetParameters()
                                .Select((p, i) => Convert.ChangeType(strParams[i], p.ParameterType))
                                .ToArray();
 
@@ -200,7 +200,7 @@ namespace HttpServer
                     break;
             }
 
-            var view = new View("error", new { ErrorCode = (int)statusCode, ErrorDescription = errorDescription });
+            var view = new View("pages/error", new { ErrorCode = (int)statusCode, ErrorDescription = errorDescription });
             return (Encoding.UTF8.GetBytes(view.GetHTML(path)), "text/html");
         }
     }

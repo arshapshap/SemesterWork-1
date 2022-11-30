@@ -17,7 +17,7 @@
                 <img class="profile-image" src="~/img/home.png">
             </a>
         </div>
-        *HEADER*
+        {{ include 'elements/header.sbnhtml' current_user }}
         <div class="publication">
             <div class="publication-header">
                 <img class="publication-image" src="{{ publication.musician.image }}">
@@ -34,8 +34,8 @@
                 </div>
                 <div class="publication-ratings">
                     <div class="publication-rating">
-                        <span>{{ publication.rating }}</span>
-                        <img src="~/img/star.png">
+                        <span>{{ publication.rating_string }}</span>
+                        <img src="{{ if publication.rating > 0}}~/img/star.png{{ else }}~/img/empty-star.png{{ end }}">
                     </div>
                 </div>
             </div>
@@ -70,16 +70,16 @@
                 <form class="form" name="new-rating" method="POST" action="/rating/">
                     <input type="hidden" name="publication_id" value="{{ publication.id }}">
                     <div>
-                        <input name="rating" id="rating-1" type="radio" value="1">
-                        <label for="rating-1">1</label>
+                        <input name="rating" id="rating-1" type="radio" value="1" required>
+                        <label for="rating-1">Ужасно</label>
                         <input name="rating" id="rating-2" type="radio" value="2">
-                        <label for="rating-2">2</label>
+                        <label for="rating-2">Плохо</label>
                         <input name="rating" id="rating-3" type="radio" value="3">
-                        <label for="rating-3">3</label>
+                        <label for="rating-3">Средне</label>
                         <input name="rating" id="rating-4" type="radio" value="4">
-                        <label for="rating-4">4</label>
+                        <label for="rating-4">Хорошо</label>
                         <input name="rating" id="rating-5" type="radio" value="5">
-                        <label for="rating-5">5</label>
+                        <label for="rating-5">Отлично</label>
                     </div>
                     <button class="button" type="submit">Отправить</button>
                 </form>
@@ -92,22 +92,7 @@
             {{ if publication.comments.size > 0 }}
             <div class="div-title">Комментарии:</div>
             {{ for comment in publication.comments }}
-            <div class="publication comment">
-                <img class="profile-image comment-author-image" src="{{ comment.author.image }}" alt="">
-                <div class="publication-info">
-                    <div class="comment-body">
-                        <a href="/profile/{{ comment.author.id }}" class="publication-author link">{{
-                            comment.author.name }}</a>, {{ comment.date }}
-                        <br>{{ comment.text }}
-                    </div>
-                </div>
-                {{ if current_user && (current_user.id == comment.author.id) }}
-                <form name="delete-comment" method="POST" action="/comment/delete">
-                    <input type="hidden" name="comment_id" value="{{ comment.id }}">
-                    <button class="button button-auto-size button-small">Удалить</button>
-                </form>
-                {{ end }}
-            </div>
+                {{ include 'elements/comment.sbnhtml' current_user comment }}
             {{ end }}
             {{ else }}
             <div class="div-title">Комментариев нет.</div>

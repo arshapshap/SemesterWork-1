@@ -1,0 +1,18 @@
+<div class="publication publication-clickable publication-header" onclick="location.href='/publication/{{ publication.id }}'">
+<img class="publication-image"
+    src="{{ publication.musician.image }}">
+<div class="publication-info">
+    <div class="publication-title">{{ publication.musician.name }} - {{ publication.title }}</div>
+    <a href="/profile/{{publication.author.id}}" class="publication-author link">{{ publication.author.name }}</a>
+</div>
+<div class="publication-ratings">
+    <div class="publication-rating">
+        <span>{{ publication.rating_string }}</span>
+        <img src="{{ if publication.rating > 0}}~/img/star.png{{ else }}~/img/empty-star.png{{ end }}">
+    </div>
+    <div class="publication-comments">
+        <span>{{ publication.comments.size }}</span>
+        <img src="{{ if publication.comments.size > 0}}~/img/comment.png{{ else }}~/img/empty-comment.png{{ end }}">
+    </div>
+</div>
+</div>

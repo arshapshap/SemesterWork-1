@@ -1,0 +1,18 @@
+<div class="publication comment">
+<a href="/profile/{{ comment.author.id }}">
+    <img class="profile-image comment-author-image" src="{{ comment.author.image }}" alt="">
+</a>
+<div class="publication-info">
+    <div class="comment-body">
+        <a href="/profile/{{ comment.author.id }}" class="publication-author link">{{
+            comment.author.name }}</a>, {{ comment.date }}
+        <br>{{ comment.text }}
+    </div>
+</div>
+{{ if current_user && (current_user.id == comment.author.id) }}
+<form name="delete-comment" method="POST" action="/comment/delete">
+    <input type="hidden" name="comment_id" value="{{ comment.id }}">
+    <button class="button button-auto-size button-small">Удалить</button>
+</form>
+{{ end }}
+</div>

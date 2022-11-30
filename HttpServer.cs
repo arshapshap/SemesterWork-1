@@ -39,8 +39,7 @@ namespace HttpServer
 
             Program.PrintMessage("Сервер запущен.");
 
-            Thread thread = new Thread(Processing);
-            thread.Start();
+            ProcessingAsync();
         }
 
         public void Stop()
@@ -56,21 +55,20 @@ namespace HttpServer
             Program.PrintMessage("Сервер остановлен.");
         }
 
-        private void Processing()
+        private async Task ProcessingAsync()
         {
-            HttpListenerContext context;
             try
             {
-                context = listener.GetContext();
+                var context = await listener.GetContextAsync();
 
                 byte[] buffer;
                 var response = ResponseProvider.GetResponse(context, settings.Path, out buffer);
 
                 Stream output = response.OutputStream;
-                output.Write(buffer, 0, buffer.Length);
+                await output.WriteAsync(buffer, 0, buffer.Length);
                 output.Close();
 
-                Processing();
+                await ProcessingAsync();
             }
             catch (Exception ex)
             {

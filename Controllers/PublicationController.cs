@@ -2,6 +2,7 @@
 using HttpServer.Models;
 using HttpServer.ORM;
 using HttpServer.SessionsService;
+using HttpServer.TemplateService;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +33,14 @@ namespace HttpServer.Controllers
 
             var musician = MusicianController.GetMusicianByName(musicianName);
             if (musician == null)
-                return new ControllerResponse(new View("new-publication", new { NewMusician = true, MusicianName = HttpUtility.UrlDecode(musicianName), Title = HttpUtility.UrlDecode(title), Text = HttpUtility.UrlDecode(text) }));
+            {
+                var entered = new {
+                    MusicianName = HttpUtility.UrlDecode(musicianName),
+                    PublicationTitle = HttpUtility.UrlDecode(title),
+                    PublicationText = HttpUtility.UrlDecode(text)
+                };
+                return new ControllerResponse(new View("pages/new-publication", new { NewMusician = true, EnteredInfo = entered, CurrentUser = user }));
+            }
 
             var publication = new Publication(user.Id, musician.Id, HttpUtility.UrlDecode(title), HttpUtility.UrlDecode(text), DateTime.Now);
             var publicationId = publicationDAO.Insert(publication);
@@ -60,29 +68,27 @@ namespace HttpServer.Controllers
             return new ControllerResponse(null, action: redirectAction);
         }
 
-        [HttpGET(@"^\d*$", needSessionId: true)]
+        [HttpGET(@"^\d+$", needSessionId: true)]
         public static ControllerResponse ShowPublication(Guid sessionId, int id)
         {
-            var isAuthorized = SessionManager.Instance.CheckSession(sessionId);
-
-            User? currentUser = null;
-            if (isAuthorized)
-                currentUser = UserController.GetUserBySessionId(sessionId);
+            var currentUser = UserController.GetUserBySessionId(sessionId);
 
             var publication = publicationDAO.Select(id);
             if (publication == null)
                 return new ControllerResponse(null, statusCode: HttpStatusCode.NotFound);
 
-            var isRatingAvailable = !(isAuthorized && (publication.AuthorId != currentUser.Id || RatingController.GetRating(id, currentUser.Id) == null));
+            var isRatingAvailable = !(currentUser != null && (publication.AuthorId == currentUser.Id || RatingController.GetRating(id, currentUser.Id) != null));
 
-            var view = new View("publication", new { CurrentUser = currentUser, Publication = publication, IsRatingAvailable = isRatingAvailable });
+            var view = new View("pages/publication", new { Publication = publication, CurrentUser = currentUser, IsRatingAvailable = isRatingAvailable });
             return new ControllerResponse(view);
         }
 
-        [HttpGET("^$", onlyForAuthorized: true)]
-        public static ControllerResponse ShowCreatePublicationPage()
+        [HttpGET("^$", onlyForAuthorized: true, needSessionId: true)]
+        public static ControllerResponse ShowNewPublicationPage(Guid sessionId)
         {
-            var view = new View("new-publication");
+            var currentUser = UserController.GetUserBySessionId(sessionId);
+
+            var view = new View("pages/new-publication", new { CurrentUser = currentUser, EnteredInfo = new { } });
             return new ControllerResponse(view);
         }
 

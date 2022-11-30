@@ -11,36 +11,19 @@
 
 <body class="body">
     <div class="container">
-        *HEADER*
+        {{ include 'elements/header.sbnhtml' current_user }}
         <div class="categories">
             <a {{ if !show_popular }}href="/popular"{{ end }} class="{{ if show_popular }}selected-link{{ else }}link{{ end }}">Популярные публикации</a>
             |
             <a {{ if show_popular }}href="/new"{{ end }} class="{{ if !show_popular }}selected-link{{ else }}link{{ end }}">Новые публикации</a>
-            {{ if is_authorized }}
+            {{ if current_user }}
             |
             <a href="/publication" class="link">Создать публикацию</a>
             {{ end }}
         </div>
         <div class="publications">
             {{ for publication in publications }}
-            <div class="publication publication-clickable publication-header" onclick="location.href='/publication/{{publication.id}}'">
-                <img class="publication-image"
-                    src="{{publication.musician.image}}">
-                <div class="publication-info">
-                    <div class="publication-title">{{publication.musician.name}} - {{publication.title}}</div>
-                    <a href="/profile/{{publication.author.id}}" class="publication-author link">{{publication.author.name}}</a>
-                </div>
-                <div class="publication-ratings">
-                    <div class="publication-rating">
-                        <span>{{publication.rating}}</span>
-                        <img src="~/img/star.png">
-                    </div>
-                    <div class="publication-comments">
-                        <span>{{publication.comments.size}}</span>
-                        <img src="~/img/comment.png">
-                    </div>
-                </div>
-            </div>
+                {{ include 'elements/publication.sbnhtml' publication }}
             {{ end }}
         </div>
 

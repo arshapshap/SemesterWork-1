@@ -35,9 +35,9 @@ namespace HttpServer.Models
         public string Text { get; set; }
 
         [FieldDB("date")]
-        public string SqlDate { get => DateTime.ToString("yyyy-MM-dd hh:mm:ss"); }
+        public string SqlDate { get => DateTime.ToString("yyyy-MM-dd HH:mm:ss"); }
 
-        public string Date { get => DateTime.ToString("hh:mm dd.MM.yyyy"); }
+        public string Date { get => DateTime.ToString("HH:mm dd.MM.yyyy"); }
 
         public DateTime DateTime { get; }
 

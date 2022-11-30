@@ -51,6 +51,7 @@ namespace HttpServer.Models
                 var ratings = RatingController.GetRatingsOnPublication(Id);
                 return (ratings.Length > 0) ? ratings.Average(r => r.Points) : 0;
             } }
+        public string RatingString { get => Rating.ToString("0.0", System.Globalization.CultureInfo.GetCultureInfo("en-US")); }
 
         public Comment[] Comments { get => CommentController.GetCommentsOnPublication(Id).OrderByDescending(c => c.Id).ToArray() ; }
 

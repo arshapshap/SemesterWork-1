@@ -20,7 +20,7 @@
                     <img class="profile-image" src="~/img/home.png">
                 </a>
             </div>
-            *HEADER*
+            {{ include 'elements/header.sbnhtml' current_user }}
             <div class="publication">
                 <div class="publication-header">
                     <img class="publication-image user-image"
@@ -39,24 +39,7 @@
             <div class="publications">
                 <div class="div-title">Публикации песен <b>{{ musician.name }}</b>:</div>
                 {{ for publication in musician.publications }}
-                <div class="publication publication-clickable publication-header" onclick="location.href='/publication/{{publication.id}}'">
-                    <img class="publication-image"
-                        src="{{publication.musician.image}}">
-                    <div class="publication-info">
-                        <div class="publication-title">{{publication.musician.name}} - {{publication.title}}</div>
-                        <a href="/profile/{{publication.author.id}}" class="publication-author link">{{publication.author.name}}</a>
-                    </div>
-                    <div class="publication-ratings">
-                        <div class="publication-rating">
-                            <span>{{publication.rating}}</span>
-                            <img src="~/img/star.png">
-                        </div>
-                        <div class="publication-comments">
-                            <span>{{publication.comments.size}}</span>
-                            <img src="~/img/comment.png">
-                        </div>
-                    </div>
-                </div>
+                    {{ include 'elements/publication.sbnhtml' publication }}
                 {{ end }}
             </div>
         </div>

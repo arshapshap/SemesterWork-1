@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="~/css/common.css">
+    <link rel="stylesheet" href="~/css/publication.css">
+    <link rel="stylesheet" href="~/css/main.css">
+    <link rel="stylesheet" href="~/css/profile.css">
+    <title>{{ user.name }}</title>
+</head>
+
+<body>
+
+    <body class="body">
+        <div class="container">
+            <div class="header-left">
+                <a href="/main">
+                    <img class="profile-image" src="~/img/home.png">
+                </a>
+            </div>
+            {{ include 'elements/header.sbnhtml' current_user }}
+            <div class="publication">
+                <div class="publication-header">
+                    <img class="publication-image user-image" src="{{ user.image }}">
+                    <div class="publication-info">
+                        <div class="publication-title">
+                            <a class="link login-link">{{ user.login }}</a>
+                            <br>{{ user.name }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="publications">
+                {{ if user.publications.size > 0 }}
+                <div class="div-title">Публикации пользователя:</div>
+                {{ for publication in user.publications }}
+                    {{ include 'elements/publication.sbnhtml' publication }}
+                {{ end }}
+                {{ else }}
+                <div class="div-title">Пользователь ничего не публиковал.</div>
+                {{ end }}
+            </div>
+        </div>
+    </body>
+</body>
+
+</html>
