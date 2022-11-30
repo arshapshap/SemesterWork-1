@@ -23,6 +23,7 @@ namespace HttpServer.ORM
         public Publication? Select(int id) => orm.Select<Publication>(id);
 
         public int Insert(Publication publication) => orm.Insert(publication);
+
         public void Delete(int id) => orm.Delete(id);
     }
 }

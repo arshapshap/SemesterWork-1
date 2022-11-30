@@ -9,14 +9,7 @@
     <link rel="stylesheet" href="~/css/new-publication.css">
     <title>Новая публикация</title>
 </head>
-<script>
-    function auto_height(textarea_id) {
-        textarea = document.getElementById(textarea_id)
-        textarea.style.height = "1px";
-        textarea.style.height = (textarea.scrollHeight - 3) + "px";
-    }
-</script>
-
+<script src="~/scripts/auto_height.js"></script>
 <body class="body" onload="auto_height('text-textarea'); {{ if new_musician }}auto_height('biography-textarea');{{ end }}">
     <div class="container">
         <div class="header-left">

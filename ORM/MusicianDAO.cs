@@ -18,8 +18,6 @@ namespace HttpServer.ORM
 
         public Musician[] Select() => orm.Select<Musician>();
 
-        public Musician[] SelectWhere(Dictionary<string, object> conditions) => orm.SelectWhere<Musician>(conditions);
-
         public Musician? Select(int id) => orm.Select<Musician>(id);
 
         public Musician? Select(string name) => orm.SelectWhere<Musician>(new Dictionary<string, object> { { "name", name } }).FirstOrDefault();

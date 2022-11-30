@@ -49,7 +49,7 @@ namespace HttpServer.Models
 
         public double Rating { get => 5.0; }
 
-        public int[] Comments { get => new[] {1, 2, 3, 4, 5, 6, 7} ; }
+        public Comment[] Comments { get => CommentController.GetCommentsOnPublication(Id).OrderByDescending(c => c.Id).ToArray() ; }
 
         public User Author { get => UserController.GetUserById(AuthorId);}
 

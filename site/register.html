@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="~/css/auth.css">
     <title>Регистрация</title>
 </head>
-<script src="~/scripts/register-validation.js"></script>
+<script src="~/scripts/check_form.js"></script>
 <body class="body">
     <div class="container">
         <div class="header-left">
@@ -16,7 +16,7 @@
                 <img class="profile-image" src="~/img/home.png">
             </a>
         </div>
-        <form class="form" name="register" method="POST" action="/profile/register" onsubmit="return checkForm();">
+        <form class="form" name="register" method="POST" action="/profile/register" onsubmit="return check_form();">
             <div>
                 <div class="title">Создайте аккаунт</div>
                 <div class="title-hint">Создайте аккаунт, чтобы оставлять комментарии и публиковать посты.</div>
@@ -24,7 +24,7 @@
             <div class="fields">
                 <div class="field">
                     <span class="field-title">Логин</span>
-                    <input class="field-input" type="text" id="login" value="{{ login }}" name="login" required="required" maxlength="50" onchange="checkLogin(this)">
+                    <input class="field-input" type="text" id="login" value="{{ login }}" name="login" required="required" maxlength="50" onchange="check_login(this)">
                     <div id="correct-login-hint" class="js-hint field-hint">Логин может содержать только латинские буквы, цифры и нижнее подчеркивание</div>
                     <div id="system-login-hint" class="js-hint field-hint">Этот логин зарезервирован системой</div>
                     {{ if incorrect_login }}
@@ -33,7 +33,7 @@
                 </div>
                 <div class="field">
                     <span class="field-title">Имя и фамилия</span>
-                    <input class="field-input" type="text" id="name" value="{{ name }}" name="name" required="required" maxlength="50" onchange="checkName(this)">
+                    <input class="field-input" type="text" id="name" value="{{ name }}" name="name" required="required" maxlength="50" onchange="check_name(this)">
                     <div id="correct-name-hint" class="js-hint field-hint">Имя может содержать только кириллицу</div>
                 </div>
                 <div class="field">
@@ -42,7 +42,7 @@
                 </div>
                 <div class="field">
                     <span class="field-title">Подтвердите пароль</span>
-                    <input class="field-input" type="password" id="password-confirm" required="required" minlength="8" maxlength="50" onchange="matchPassword()">
+                    <input class="field-input" type="password" id="password-confirm" required="required" minlength="8" maxlength="50" onchange="match_password()">
                     <div id="password-confirm-hint" class="js-hint field-hint">Пароли должны совпадать</div>
                 </div>
             </div>

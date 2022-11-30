@@ -36,8 +36,6 @@ namespace HttpServer.Controllers
             => musicianDAO.Select(id);
 
         public static void Create(string name, string biography, string image)
-        {
-            musicianDAO.Insert(new Musician(HttpUtility.UrlDecode(name), HttpUtility.UrlDecode(biography), HttpUtility.UrlDecode(image)));
-        }
+            => musicianDAO.Insert(new Musician(HttpUtility.UrlDecode(name), HttpUtility.UrlDecode(biography), HttpUtility.UrlDecode(image)));
     }
 }

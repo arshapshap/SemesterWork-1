@@ -43,7 +43,7 @@ namespace HttpServer.Controllers
             return new ControllerResponse(null, action: redirectAction);
         }
 
-        [HttpGET("^delete$", onlyForAuthorized: true, needSessionId: true)]
+        [HttpPOST("^delete$", onlyForAuthorized: true, needSessionId: true)]
         public static ControllerResponse Delete(Guid sessionId, int publicationId)
         {
             var user = UserController.GetUserBySessionId(sessionId);
@@ -52,7 +52,7 @@ namespace HttpServer.Controllers
             if (user.Id == publication.AuthorId)
                 publicationDAO.Delete(publicationId);
             else
-                new ControllerResponse(null, statusCode: HttpStatusCode.Forbidden);
+                return new ControllerResponse(null, statusCode: HttpStatusCode.Forbidden);
             
             var redirectAction = (HttpListenerResponse response) 
                 => response.Redirect($"/main");
