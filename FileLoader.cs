@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,10 +15,7 @@ namespace HttpServer
             string contentType;
 
             if (!File.Exists(filePath))
-            {
-                response = (new byte[0], "");
-                return false;
-            }
+                throw new ServerException(HttpStatusCode.NotFound, $"Не найдено: {filePath}.");
 
             buffer = File.ReadAllBytes(filePath);
             contentType = filePath.Split('.').Last();

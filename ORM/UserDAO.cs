@@ -16,8 +16,8 @@ namespace HttpServer.ORM
             orm = new MyORM(connectionString, "Users");
         }
 
-        public User? Select(string login, string password) 
-            => orm.SelectWhere<User>(new Dictionary<string, object>() { { "login", login }, { "password", password } }).FirstOrDefault();
+        public User? Select(string login, string hashedPassword) 
+            => orm.SelectWhere<User>(new Dictionary<string, object>() { { "login", login }, { "password", hashedPassword } }).FirstOrDefault();
 
         public User? Select(int id) => orm.Select<User>(id);
 

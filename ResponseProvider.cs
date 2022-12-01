@@ -1,7 +1,7 @@
 ﻿using HttpServer.Attributes;
 using HttpServer.Controllers;
 using HttpServer.SessionsService;
-using HttpServer.TemplateService;
+using HttpServer.TemplatesService;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -26,11 +26,7 @@ namespace HttpServer
             try
             {
                 if (!TryHandleRequest(request, response, sitePath, out serverResponse))
-                {
-                    string filePath = sitePath + request.RawUrl.Replace("%20", " ").Split("~").Last();
-                    if (!FileLoader.TryGetResponse(filePath, out serverResponse))
-                        throw new ServerException(HttpStatusCode.NotFound, $"Не найдено: {filePath}.");
-                }
+                    throw new ServerException(HttpStatusCode.NotFound);
             }
             catch (Exception ex)
             {
@@ -54,8 +50,11 @@ namespace HttpServer
         private static bool TryHandleRequest(HttpListenerRequest request, HttpListenerResponse response, string sitePath, out (byte[] buffer, string contentType) serverResponse)
         {
             serverResponse = (new byte[0], "");
-            if (request.Url.AbsolutePath.Contains('~'))
-                return false;
+            if (request.RawUrl.Contains('~'))
+            {
+                var filePath = sitePath + request.RawUrl.Replace("%20", " ").Split("~").Last();
+                return FileLoader.TryGetResponse(filePath, out serverResponse);
+            }
 
             if (request.Url.Segments.Length < 2)
             {

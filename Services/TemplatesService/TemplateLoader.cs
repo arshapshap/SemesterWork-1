@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HttpServer.TemplateService
+namespace HttpServer.TemplatesService
 {
     internal class TemplateLoader : ITemplateLoader
     {
@@ -16,6 +16,7 @@ namespace HttpServer.TemplateService
         {
             this.path = path;
         }
+
         public string GetPath(TemplateContext context, SourceSpan callerSpan, string templateName)
         {
             return Path.Combine(Environment.CurrentDirectory, path, templateName);

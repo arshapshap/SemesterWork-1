@@ -18,6 +18,10 @@
     justify-content: center;
 }
 
+.no-publications-text {
+    text-align: center;
+}
+
 .publication-image {
     width: 80px;
 }

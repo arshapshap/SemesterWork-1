@@ -15,8 +15,8 @@ namespace HttpServer.Models
         [FieldDB("login")]
         public string Login { get; }
 
-        [FieldDB("password", isCyrillic: true)]
-        public string Password { get; }
+        [FieldDB("password")]
+        public string HashedPassword { get; }
 
         [FieldDB("name", isCyrillic: true)]
         public string Name { get; set; }
@@ -26,15 +26,15 @@ namespace HttpServer.Models
 
         public Publication[] Publications { get => PublicationController.GetUserPublications(Id).OrderByDescending(p => p.Rating).ToArray(); }
 
-        public User(int id, string login, string password, string name, string image) : this(login, password, name, image)
+        public User(int id, string login, string hashedPassword, string name, string image) : this(login, hashedPassword, name, image)
         {
             Id = id;
         }
 
-        public User(string login, string password, string name, string image = "~/img/profile.png")
+        public User(string login, string hashedPassword, string name, string image = "~/img/profile.png")
         {
             Login = login;
-            Password = password;
+            HashedPassword = hashedPassword;
             Name = name;
             Image = image;
         }

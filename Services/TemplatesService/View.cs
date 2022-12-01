@@ -10,7 +10,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HttpServer.TemplateService
+namespace HttpServer.TemplatesService
 {
     internal class View
     {

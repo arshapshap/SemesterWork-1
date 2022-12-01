@@ -2,7 +2,7 @@
 using HttpServer.Models;
 using HttpServer.ORM;
 using HttpServer.SessionsService;
-using HttpServer.TemplateService;
+using HttpServer.TemplatesService;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -24,7 +24,7 @@ namespace HttpServer.Controllers
         [HttpPOST("^login$")]
         public static ControllerResponse Login(string login, string password)
         {
-            var user = userDAO.Select(login, HttpUtility.UrlDecode(password));
+            var user = userDAO.Select(login, HashService.Hash(password));
             if (user == null)
             {
                 var entered = new
@@ -60,7 +60,7 @@ namespace HttpServer.Controllers
                 return new ControllerResponse(new View("pages/register", new { IncorrectLogin = true, EnteredInfo = entered }));
             }
 
-            userDAO.Insert(new User(login, HttpUtility.UrlDecode(password), HttpUtility.UrlDecode(name)));
+            userDAO.Insert(new User(login, HashService.Hash(password), HttpUtility.UrlDecode(name)));
             return Login(login, password);
         }
 

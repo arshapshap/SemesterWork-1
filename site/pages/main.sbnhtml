@@ -22,11 +22,13 @@
             {{ end }}
         </div>
         <div class="publications">
+            {{ if publications.size == 0 }}
+            <h1 class="categories no-publications-text">Нет публикаций</h1>
+            {{ end }}
             {{ for publication in publications }}
                 {{ include 'elements/publication.sbnhtml' publication }}
             {{ end }}
         </div>
-
 </body>
 
 </html>
