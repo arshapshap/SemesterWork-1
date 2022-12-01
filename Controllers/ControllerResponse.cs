@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HttpServer.TemplatesService;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -9,17 +10,14 @@ namespace HttpServer.Controllers
 {
     internal struct ControllerResponse
     {
-        public readonly object? response;
-        public readonly HttpStatusCode statusCode;
-        public readonly Action<HttpListenerResponse> action;
+        public readonly View? View;
+        public readonly Action<HttpListenerResponse> Action;
 
-        public ControllerResponse(object? response, 
-            Action<HttpListenerResponse> action = null, 
-            HttpStatusCode statusCode = HttpStatusCode.OK)
+        public ControllerResponse(View? response = null, 
+            Action<HttpListenerResponse> action = null)
         {
-            this.response = response;
-            this.statusCode = statusCode;
-            this.action = (action == null) ? (HttpListenerResponse) => { } : action;
+            this.View = response;
+            this.Action = (action is null) ? (HttpListenerResponse) => { } : action;
         }
     }
 }

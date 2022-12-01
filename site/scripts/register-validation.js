@@ -7,7 +7,7 @@ function checkForm() {
 
 function checkLogin(input) {
     var login = input.value;
-    if (document.getElementById("taken-login-hint") != null)
+    if (document.getElementById("taken-login-hint") is not null)
         document.getElementById("taken-login-hint").style.display = "none"
 
     var systemWords = ["login", "register", "logout"]

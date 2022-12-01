@@ -43,7 +43,7 @@ namespace HttpServer.TemplatesService
             context.TemplateLoader = new TemplateLoader(path);
             var scriptObject = new ScriptObject();
 
-            if (model != null)
+            if (model is not null)
                 scriptObject.Import(model);
 
             context.PushGlobal(scriptObject);

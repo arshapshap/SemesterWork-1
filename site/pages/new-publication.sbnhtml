@@ -20,19 +20,19 @@
         {{ include 'elements/header.sbnhtml' current_user }}
         <div class="center title">Новая публикация</div>
         <form class="form" name="new-publication" method="POST" action="{{ if new_musician }}/publication/new-musician{{ else }}/publication/new{{ end }}">
-            <div class="field-title">Исполнитель:</div>
+            <div class="field-title"><br>Исполнитель:</div>
             <input class="field-input" value="{{ entered_info.musician_name }}" name="musician" type="text" required="required">
             {{ if new_musician }}
             <div class="title-hint">Этого исполнителя ещё нет в базе. Укажите информацию о нём:</div>
-            <div class="field-title">Краткая биография:</div>
+            <div class="field-title"><br>Краткая биография:</div>
             <textarea id="biography-textarea" class="textarea field-input" name="biography" type="text" required="required" oninput="auto_height('biography-textarea')"></textarea>
-            <div class="field-title">Изображение (ссылка):</div>
+            <div class="field-title"><br>Изображение (ссылка):</div>
             <input class="field-input" name="image" type="text" required="required">
             <div class="title-hint"></div>
             {{ end }}
-            <div class="field-title">Название:</div>
+            <div class="field-title"><br>Название:</div>
             <input class="field-input" value="{{ entered_info.publication_title }}" name="title" type="text" required="required">
-            <div class="field-title">Текст:</div>
+            <div class="field-title"><br>Текст:</div>
             <textarea id="text-textarea" class="textarea field-input" name="text" type="text" required="required"
                 oninput="auto_height('text-textarea')">{{ entered_info.publication_text }}</textarea>
             <div class="center">

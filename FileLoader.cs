@@ -9,7 +9,7 @@ namespace HttpServer
 {
     static class FileLoader
     {
-        public static bool TryGetResponse(string filePath, out (byte[] buffer, string contentType) response)
+        public static (byte[] buffer, string contentType) GetFile(string filePath)
         {
             byte[] buffer;
             string contentType;
@@ -20,8 +20,7 @@ namespace HttpServer
             buffer = File.ReadAllBytes(filePath);
             contentType = filePath.Split('.').Last();
 
-            response = (buffer, $"text/{contentType}");
-            return true;
+            return (buffer, $"text/{contentType}");
         }
     }
 }

@@ -19,74 +19,83 @@ namespace HttpServer.Controllers
         static PublicationDAO publicationDAO
             = new PublicationDAO(MainController.DatabaseConnectionString);
 
-        [HttpPOST("^new-musician$", onlyForAuthorized: true, needSessionId: true)]
-        public static ControllerResponse CreateWithMusician(Guid sessionId, string musicianName, string musicianBiography, string musicianImage, string title, string text)
+        [HttpPOST("^new-musician$")]
+        public static ControllerResponse CreateWithMusician(string musicianName, string musicianBiography, string musicianImage, string title, string text, Guid sessionId)
         {
             MusicianController.Create(musicianName, musicianBiography, musicianImage);
-            return Create(sessionId, musicianName, title, text);
+            return Create(musicianName, title, text, sessionId);
         }
 
-        [HttpPOST("^new$", onlyForAuthorized: true, needSessionId: true)]
-        public static ControllerResponse Create(Guid sessionId, string musicianName, string title, string text)
+        [HttpPOST("^new$")]
+        public static ControllerResponse Create(string musicianName, string title, string text, Guid sessionId)
         {
-            var user = UserController.GetUserBySessionId(sessionId);
+            var currentUser = UserController.GetUserBySessionId(sessionId);
+            if (currentUser is null)
+                throw new ServerException(HttpStatusCode.Unauthorized);
 
             var musician = MusicianController.GetMusicianByName(musicianName);
-            if (musician == null)
+            if (musician is null)
             {
                 var entered = new {
                     MusicianName = HttpUtility.UrlDecode(musicianName),
                     PublicationTitle = HttpUtility.UrlDecode(title),
                     PublicationText = HttpUtility.UrlDecode(text)
                 };
-                return new ControllerResponse(new View("pages/new-publication", new { NewMusician = true, EnteredInfo = entered, CurrentUser = user }));
+                return new ControllerResponse(new View("pages/new-publication", new { NewMusician = true, EnteredInfo = entered, CurrentUser = currentUser }));
             }
 
-            var publication = new Publication(user.Id, musician.Id, HttpUtility.UrlDecode(title), HttpUtility.UrlDecode(text), DateTime.Now);
+            var publication = new Publication(currentUser.Id, musician.Id, HttpUtility.UrlDecode(title), HttpUtility.UrlDecode(text), DateTime.Now);
             var publicationId = publicationDAO.Insert(publication);
 
             var redirectAction = (HttpListenerResponse response) 
                 => response.Redirect($"/publication/{publicationId}");
 
-            return new ControllerResponse(null, action: redirectAction);
+            return new ControllerResponse(action: redirectAction);
         }
 
-        [HttpPOST("^delete$", onlyForAuthorized: true, needSessionId: true)]
-        public static ControllerResponse Delete(Guid sessionId, int publicationId)
+        [HttpPOST("^delete$")]
+        public static ControllerResponse Delete(int publicationId, Guid sessionId)
         {
-            var user = UserController.GetUserBySessionId(sessionId);
-            var publication = publicationDAO.Select(publicationId);
+            var currentUser = UserController.GetUserBySessionId(sessionId);
+            if (currentUser is null)
+                throw new ServerException(HttpStatusCode.Unauthorized);
 
-            if (user.Id == publication.AuthorId)
+            var publication = publicationDAO.Select(publicationId);
+            if (publication is null)
+                throw new ServerException(HttpStatusCode.NotFound);
+
+            if (currentUser.Id == publication.AuthorId)
                 publicationDAO.Delete(publicationId);
             else
-                return new ControllerResponse(null, statusCode: HttpStatusCode.Forbidden);
-            
+                throw new ServerException(HttpStatusCode.NotFound);
+
             var redirectAction = (HttpListenerResponse response) 
                 => response.Redirect($"/main");
 
-            return new ControllerResponse(null, action: redirectAction);
+            return new ControllerResponse(action: redirectAction);
         }
 
-        [HttpGET(@"^\d+$", needSessionId: true)]
-        public static ControllerResponse ShowPublication(Guid sessionId, int id)
+        [HttpGET(@"^\d+$")]
+        public static ControllerResponse ShowPublication(int id, Guid sessionId)
         {
             var currentUser = UserController.GetUserBySessionId(sessionId);
 
             var publication = publicationDAO.Select(id);
-            if (publication == null)
-                return new ControllerResponse(null, statusCode: HttpStatusCode.NotFound);
+            if (publication is null)
+                throw new ServerException(HttpStatusCode.NotFound);
 
-            var isRatingAvailable = !(currentUser != null && (publication.AuthorId == currentUser.Id || RatingController.GetRating(id, currentUser.Id) != null));
+            var isRatingAvailable = !(currentUser is not null && (publication.AuthorId == currentUser.Id || RatingController.GetRating(id, currentUser.Id) is not null));
 
             var view = new View("pages/publication", new { Publication = publication, CurrentUser = currentUser, IsRatingAvailable = isRatingAvailable });
             return new ControllerResponse(view);
         }
 
-        [HttpGET("^$", onlyForAuthorized: true, needSessionId: true)]
+        [HttpGET("^$")]
         public static ControllerResponse ShowNewPublicationPage(Guid sessionId)
         {
             var currentUser = UserController.GetUserBySessionId(sessionId);
+            if (currentUser is null)
+                throw new ServerException(HttpStatusCode.Unauthorized);
 
             var view = new View("pages/new-publication", new { CurrentUser = currentUser, EnteredInfo = new { } });
             return new ControllerResponse(view);

@@ -12,10 +12,13 @@ namespace HttpServer.Models
     internal class Musician
     {
         public int Id { get; }
+
         [FieldDB("name", isCyrillic: true)]
         public string Name { get; }
+
         [FieldDB("biography", isCyrillic: true)]
         public string Biography { get; set; }
+
         [FieldDB("image")]
         public string Image { get; set; }
 

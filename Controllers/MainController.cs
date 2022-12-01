@@ -15,11 +15,11 @@ namespace HttpServer.Controllers
     {
         public static readonly string DatabaseConnectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=SiteDB;Integrated Security=True";
 
-        [HttpGET("^(main|popular)$", needSessionId: true)]
+        [HttpGET("^(main|popular)$")]
         public static ControllerResponse ShowPopularPublications(Guid sessionId)
             => ShowMainPage(sessionId, showPopular: true);
 
-        [HttpGET("^new$", needSessionId: true)]
+        [HttpGET("^new$")]
         public static ControllerResponse ShowNewPublications(Guid sessionId)
             => ShowMainPage(sessionId, showPopular: false);
 
@@ -37,7 +37,7 @@ namespace HttpServer.Controllers
             return new ControllerResponse(view);
         }
 
-        [HttpGET("^auth$", needSessionId:true)]
+        [HttpGET("^auth$")]
         public static ControllerResponse ShowAuthPage(Guid sessionId)
         {
             if (SessionManager.Instance.CheckSession(sessionId))
@@ -47,14 +47,14 @@ namespace HttpServer.Controllers
                     {
                         response.Redirect("/main");
                     };
-                return new ControllerResponse(null, action: redirectAction);
+                return new ControllerResponse(action: redirectAction);
             }
 
             var view = new View("pages/auth", new { EnteredInfo = new { }});
             return new ControllerResponse(view);
         }
 
-        [HttpGET("^register$", needSessionId:true)]
+        [HttpGET("^register$")]
         public static ControllerResponse ShowRegisterPage(Guid sessionId)
         {
             if (SessionManager.Instance.CheckSession(sessionId))
@@ -64,7 +64,7 @@ namespace HttpServer.Controllers
                     {
                         response.Redirect("/main");
                     };
-                return new ControllerResponse(null, action: redirectAction);
+                return new ControllerResponse(action: redirectAction);
             }
 
             var view = new View("pages/register", new { EnteredInfo = new { } });

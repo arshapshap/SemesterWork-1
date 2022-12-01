@@ -22,15 +22,12 @@ namespace HttpServer.Controllers
             = new UserDAO(MainController.DatabaseConnectionString);
 
         [HttpPOST("^login$")]
-        public static ControllerResponse Login(string login, string password)
+        public static ControllerResponse Login(string login, string password, Guid sessionId)
         {
             var user = userDAO.Select(login, HashService.Hash(password));
-            if (user == null)
+            if (user is null)
             {
-                var entered = new
-                {
-                    Login = login,
-                };
+                var entered = new { Login = login };
                 return new ControllerResponse(new View("pages/auth", new { IncorrectPassword = true, EnteredInfo = entered }));
             }
 
@@ -44,63 +41,59 @@ namespace HttpServer.Controllers
                     response.Redirect(@"/main");
                 };
 
-            return new ControllerResponse(true, action: action);
+            return new ControllerResponse(action: action);
         }
 
         [HttpPOST("^register$")]
-        public static ControllerResponse Register(string login, string name, string password)
+        public static ControllerResponse Register(string login, string name, string password, Guid sessionId)
         {
-            if (userDAO.Select(login) != null)
+            if (userDAO.Select(login) is not null)
             {
-                var entered = new
-                {
-                    Login = login,
-                    Name = HttpUtility.UrlDecode(name)
-                };
+                var entered = new { Login = login, Name = HttpUtility.UrlDecode(name) };
                 return new ControllerResponse(new View("pages/register", new { IncorrectLogin = true, EnteredInfo = entered }));
             }
 
             userDAO.Insert(new User(login, HashService.Hash(password), HttpUtility.UrlDecode(name)));
-            return Login(login, password);
+            return Login(login, password, sessionId);
         }
 
-        [HttpPOST("^logout$", needSessionId: true)]
+        [HttpPOST("^logout$")]
         public static ControllerResponse LogOut(Guid sessionId)
         {
             SessionManager.Instance.RemoveSession(sessionId);
 
             var redirectAction = (HttpListenerResponse response) => response.Redirect(@"/auth");
-            return new ControllerResponse(null, redirectAction);
+            return new ControllerResponse(action: redirectAction);
         }
 
-        [HttpGET(@"^\d+$", needSessionId: true)]
-        public static ControllerResponse ShowUserProfile(Guid sessionId, int id)
+        [HttpGET(@"^\d+$")]
+        public static ControllerResponse ShowUserProfile(int id, Guid sessionId)
         {
             var currentUser = GetUserBySessionId(sessionId);
 
             var user = userDAO.Select(id);
-            if (user == null)
-                return new ControllerResponse(null, statusCode: HttpStatusCode.NotFound);
+            if (user is null)
+                throw new ServerException(HttpStatusCode.Unauthorized);
 
             var view = new View("pages/profile", new { CurrentUser = currentUser, User = user });
             return new ControllerResponse(view);
         }
 
-        [HttpGET("^[a-zA-Z0-9_]+$", needSessionId: true)]
-        public static ControllerResponse ShowUserProfile(Guid sessionId, string login)
+        [HttpGET("^[a-zA-Z0-9_]+$")]
+        public static ControllerResponse ShowUserProfile(string login, Guid sessionId)
         {
             var user = userDAO.Select(login);
-            if (user == null)
-                return new ControllerResponse(null, statusCode: HttpStatusCode.NotFound);
+            if (user is null)
+                throw new ServerException(HttpStatusCode.Unauthorized);
 
-            return ShowUserProfile(sessionId, user.Id);
+            return ShowUserProfile(user.Id, sessionId);
         }
 
-        [HttpGET("^$", onlyForAuthorized: true, needSessionId: true)]
+        [HttpGET("^$")]
         public static ControllerResponse ShowCurrentUserProfile(Guid sessionId)
         {
             var session = SessionManager.Instance.GetSession(sessionId);
-            return ShowUserProfile(sessionId, session.AccountId);
+            return ShowUserProfile(session.AccountId, sessionId);
         }
 
         public static User? GetUserBySessionId(Guid sessionId)

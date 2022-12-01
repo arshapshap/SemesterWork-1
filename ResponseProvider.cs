@@ -21,45 +21,42 @@ namespace HttpServer
         {
             HttpListenerRequest request = context.Request;
             HttpListenerResponse response = context.Response;
-            (byte[] buffer, string contentType) serverResponse;
+            (byte[] buffer, string contentType)? serverResponse;
 
             try
             {
-                if (!TryHandleRequest(request, response, sitePath, out serverResponse))
-                    throw new ServerException(HttpStatusCode.NotFound);
+                serverResponse = HandleRequest(request, response, sitePath);
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                var statusCode = (ex is ServerException) ? ((ServerException)ex).StatusCode : HttpStatusCode.InternalServerError;
+                var statusCode = (exception is ServerException) ? ((ServerException)exception).StatusCode : HttpStatusCode.InternalServerError;
 
                 serverResponse = GetErrorServerResponse(statusCode, sitePath);
                 response.StatusCode = (int)statusCode;
-                
-                if (ex is not ServerException)
-                    Program.PrintMessage("Произошла ошибка: " + ex.Message);
+
+                if (exception is not ServerException)
+                    Program.PrintMessage("Произошла ошибка: " + exception.Message);
             }
 
-            response.Headers.Set("Content-Type", serverResponse.contentType);
-            response.ContentLength64 = serverResponse.buffer.Length;
-
-            buffer = serverResponse.buffer;
+            response.Headers.Set("Content-Type", serverResponse?.contentType);
+            response.ContentLength64 = serverResponse?.buffer?.Length ?? 0;
+            buffer = serverResponse?.buffer ?? Array.Empty<byte>();
 
             return response;
         }
 
-        private static bool TryHandleRequest(HttpListenerRequest request, HttpListenerResponse response, string sitePath, out (byte[] buffer, string contentType) serverResponse)
+        private static (byte[] buffer, string contentType)? HandleRequest(HttpListenerRequest request, HttpListenerResponse response, string sitePath)
         {
-            serverResponse = (new byte[0], "");
             if (request.RawUrl.Contains('~'))
             {
                 var filePath = sitePath + request.RawUrl.Replace("%20", " ").Split("~").Last();
-                return FileLoader.TryGetResponse(filePath, out serverResponse);
+                return FileLoader.GetFile(filePath);
             }
 
             if (request.Url.Segments.Length < 2)
             {
                 response.Redirect(@"/main");
-                return true;
+                return null;
             }
 
             string[] strParams = request.Url
@@ -72,66 +69,56 @@ namespace HttpServer
             var methodURI = (strParams.Length > 0) ? strParams[0] : "";
 
             if (!TryFindMethod(controllerURI, methodURI, request.HttpMethod, out MethodInfo method))
-                return false;
+                throw new ServerException(HttpStatusCode.NotFound);
 
             if (request.HttpMethod == "POST")
             {
                 var postData = GetRequestPostData(request);
-                strParams = (postData != null) ? postData.Split('&').Select(p => p.Split('=')[1]).ToArray() : new string[0];
+                strParams = (postData is not null) ? postData.Split('&').Select(p => p.Split('=')[1]).ToArray() : new string[0];
             }
 
             Guid? sessionId = GetSessionId(request);
 
             var httpRequestAttribute = (HttpRequest)method.GetCustomAttribute(typeof(HttpRequest));
-            if (httpRequestAttribute?.OnlyForAuthorized == true && sessionId == null)
-                throw new ServerException(HttpStatusCode.Unauthorized);
 
-            var queryParams = (httpRequestAttribute?.NeedSessionId == true) 
-                ? method.GetParameters()
-                        .Skip(1)
-                        .Select((p, i) => Convert.ChangeType(strParams[i], p.ParameterType))
-                        .Prepend(sessionId)
-                        .ToArray()
-                : method.GetParameters()
-                               .Select((p, i) => Convert.ChangeType(strParams[i], p.ParameterType))
-                               .ToArray();
+            var queryParams = method.GetParameters()
+                .SkipLast(1)
+                .Select((p, i) => Convert.ChangeType(strParams[i], p.ParameterType))
+                .Append(sessionId)
+                .ToArray();
 
             var methodResponse = (ControllerResponse)method.Invoke(null, queryParams);
 
-            if (methodResponse.statusCode != HttpStatusCode.OK)
-                throw new ServerException(methodResponse.statusCode);
+            methodResponse.Action.Invoke(response);
 
-            methodResponse.action.Invoke(response);
+            var view = methodResponse.View;
 
-            if (methodResponse.response is View)
+            if (view is not null)
             {
-                var view = (View)methodResponse.response;
-                if (sessionId != null)
-                    view.CurrentUser = UserController.GetUserBySessionId((Guid)sessionId);
-                serverResponse = (Encoding.UTF8.GetBytes(view.GetHTML(sitePath)), "text/html");
+                view.CurrentUser = UserController.GetUserBySessionId(sessionId ?? Guid.Empty);
+                return (Encoding.UTF8.GetBytes(view.GetHTML(sitePath)), "text/html");
             }
-            else
-                serverResponse = (Encoding.ASCII.GetBytes(JsonSerializer.Serialize(methodResponse.response)), "application/json");
-            return true;
+
+            return null;
         }
 
-        private static bool TryFindMethod(string controllerURI, string methodURI, string httpMethod, out MethodInfo method)
+        private static bool TryFindMethod(string controllerURI, string methodURI, string httpMethod, out MethodInfo? method)
         {
             var assembly = Assembly.GetExecutingAssembly();
             var controller = FindControllerByURI(assembly, "");
             method = FindMethodByURI(controller, httpMethod, controllerURI);
 
-            if (method != null)
+            if (method is not null)
                 return true;
 
             controller = FindControllerByURI(assembly, controllerURI);
 
-            if (controller == null)
+            if (controller is null)
                 return false;
 
             method = FindMethodByURI(controller, httpMethod, methodURI);
 
-            if (method == null)
+            if (method is null)
                 return false;
 
             return true;
@@ -141,7 +128,7 @@ namespace HttpServer
         {
             var sessionCookie = request.Cookies.Where(cookie => cookie.Name == "SessionId").FirstOrDefault();
             Guid? sessionId = null;
-            if (sessionCookie != null &&
+            if (sessionCookie is not null &&
                 SessionManager.Instance.CheckSession(Guid.Parse(sessionCookie.Value)))
                 sessionId = Guid.Parse(sessionCookie.Value);
             return sessionId;
@@ -150,8 +137,8 @@ namespace HttpServer
         private static Type? FindControllerByURI(Assembly assembly, string uri)
         {
             return assembly.GetTypes()
-                .Where(t => Attribute.IsDefined(t, typeof(ApiController)) 
-                    && Regex.IsMatch(uri, ((ApiController?)t.GetCustomAttribute(typeof(ApiController)))?.ClassURI))
+                .Where(t => Attribute.IsDefined(t, typeof(ApiController))
+                    && Regex.IsMatch(uri, ((ApiController?)t.GetCustomAttribute(typeof(ApiController)))?.ClassURI ?? ""))
                 .FirstOrDefault();
         }
 

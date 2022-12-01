@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace HttpServer.Attributes
 {
-    class ApiController : Attribute
+    internal class ApiController : Attribute
     {
         public string ClassURI;
         public ApiController(string classURI)

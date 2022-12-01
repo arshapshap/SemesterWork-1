@@ -9,7 +9,7 @@ namespace HttpServer.SettingsService
         {
             var settings = JsonSerializer.Deserialize<Settings>(File.ReadAllBytes(path));
 
-            if (settings == null)
+            if (settings is null)
                 return new Settings();
             return settings;
         }

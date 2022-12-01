@@ -17,14 +17,17 @@ namespace HttpServer.Controllers
         static CommentDAO commentDAO
             = new CommentDAO(MainController.DatabaseConnectionString);
 
-        [HttpPOST("^$", onlyForAuthorized: true, needSessionId: true)]
-        public static ControllerResponse Create(Guid sessionId, int publicationId, string text)
+        [HttpPOST("^$")]
+        public static ControllerResponse Create(int publicationId, string text, Guid sessionId)
         {
             var user = UserController.GetUserBySessionId(sessionId);
+            if (user is null)
+                throw new ServerException(HttpStatusCode.Unauthorized);
+
             var publication = PublicationController.GetPublication(publicationId);
 
-            if (publication == null)
-                return new ControllerResponse(null, statusCode: HttpStatusCode.NotFound);
+            if (publication is null)
+                throw new ServerException(HttpStatusCode.NotFound);
 
             var comment = new Comment(publicationId, user.Id, HttpUtility.UrlDecode(text), DateTime.Now);
             commentDAO.Insert(comment);
@@ -32,27 +35,30 @@ namespace HttpServer.Controllers
             var redirectAction = (HttpListenerResponse response)
                 => response.Redirect($"/publication/{publicationId}");
 
-            return new ControllerResponse(null, action: redirectAction);
+            return new ControllerResponse(action: redirectAction);
         }
 
-        [HttpPOST("^delete$", onlyForAuthorized: true, needSessionId: true)]
-        public static ControllerResponse Delete(Guid sessionId, int commentId)
+        [HttpPOST("^delete$")]
+        public static ControllerResponse Delete(int commentId, Guid sessionId)
         {
             var user = UserController.GetUserBySessionId(sessionId);
+            if (user is null)
+                throw new ServerException(HttpStatusCode.Unauthorized);
+
             var comment = commentDAO.Select(commentId);
 
-            if (comment == null)
-                return new ControllerResponse(null, statusCode: HttpStatusCode.NotFound);
+            if (comment is null)
+                throw new ServerException(HttpStatusCode.NotFound);
 
             if (user.Id == comment.AuthorId)
                 commentDAO.Delete(comment.Id);
             else
-                return new ControllerResponse(null, statusCode: HttpStatusCode.Forbidden);
+                throw new ServerException(HttpStatusCode.Forbidden);
 
             var redirectAction = (HttpListenerResponse response)
                 => response.Redirect($"/publication/{comment.PublicationId}");
 
-            return new ControllerResponse(null, action: redirectAction);
+            return new ControllerResponse(action: redirectAction);
         }
 
         public static Comment[] GetCommentsOnPublication(int publicationId)

@@ -8,6 +8,6 @@ namespace HttpServer.Attributes
 {
     class HttpGET : HttpRequest
     {
-        public HttpGET(string methodURI = "", bool onlyForAuthorized = false, bool needSessionId = false) : base(methodURI, onlyForAuthorized, needSessionId) { }
+        public HttpGET(string methodURI = "") : base(methodURI) { }
     }
 }

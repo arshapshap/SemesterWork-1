@@ -13,7 +13,7 @@ namespace HttpServer.SessionsService
         public static SessionManager Instance
         {
             get {
-                if (instance == null)
+                if (instance is null)
                     instance = new SessionManager();
                 return instance;
             }
@@ -36,7 +36,7 @@ namespace HttpServer.SessionsService
 
         public void RemoveSession(Guid guid) => cache.Remove(guid);
 
-        public bool CheckSession(Guid guid) => cache.Get(guid) != null;
+        public bool CheckSession(Guid guid) => cache.Get(guid) is not null;
 
         public Session GetSession(Guid guid) => (Session)cache.Get(guid);
     }

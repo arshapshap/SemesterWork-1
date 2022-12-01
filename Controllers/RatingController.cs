@@ -18,30 +18,33 @@ namespace HttpServer.Controllers
         static RatingDAO ratingDAO
             = new RatingDAO(MainController.DatabaseConnectionString);
 
-        [HttpPOST("^$", onlyForAuthorized: true, needSessionId: true)]
-        public static ControllerResponse Create(Guid sessionId, int publicationId, int points)
+        [HttpPOST("^$")]
+        public static ControllerResponse Create(int publicationId, int points, Guid sessionId)
         {
-            var user = UserController.GetUserBySessionId(sessionId);
+            var currentUser = UserController.GetUserBySessionId(sessionId);
+            if (currentUser is null)
+                throw new ServerException(HttpStatusCode.Unauthorized);
+
             var publication = PublicationController.GetPublication(publicationId);
+            if (publication is null)
+                throw new ServerException(HttpStatusCode.NotFound);
 
-            if (publication == null)
-                return new ControllerResponse(null, statusCode: HttpStatusCode.NotFound);
+            if (currentUser.Id == publication.AuthorId || GetRating(publicationId, currentUser.Id) is not null)
+                throw new ServerException(HttpStatusCode.Forbidden);
 
-            if (user.Id == publication.AuthorId || GetRating(publicationId, user.Id) != null)
-                return new ControllerResponse(null, statusCode: HttpStatusCode.Forbidden);
-
-            var rating = new Rating(publicationId, user.Id, points, DateTime.Now);
+            var rating = new Rating(publicationId, currentUser.Id, points, DateTime.Now);
             ratingDAO.Insert(rating);
 
             var redirectAction = (HttpListenerResponse response)
                 => response.Redirect($"/publication/{publicationId}");
 
-            return new ControllerResponse(null, action: redirectAction);
+            return new ControllerResponse(action: redirectAction);
         }
 
         public static Rating[] GetRatingsOnPublication(int publicationId)
             => ratingDAO.SelectByPublicationId(publicationId);
 
-        public static Rating? GetRating(int publicationId, int authorId) => ratingDAO.Select(publicationId, authorId);
+        public static Rating? GetRating(int publicationId, int authorId) 
+            => ratingDAO.Select(publicationId, authorId);
     }
 }
