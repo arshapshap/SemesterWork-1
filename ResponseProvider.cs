@@ -29,12 +29,18 @@ namespace HttpServer
             }
             catch (Exception exception)
             {
-                var statusCode = (exception is ServerException) ? ((ServerException)exception).StatusCode : HttpStatusCode.InternalServerError;
+                var serverException = (exception.InnerException is ServerException) 
+                    ? exception.InnerException
+                    : exception;
+
+                var statusCode = (serverException is ServerException) 
+                    ? ((ServerException)serverException).StatusCode 
+                    : HttpStatusCode.InternalServerError;
 
                 serverResponse = GetErrorServerResponse(statusCode, sitePath);
                 response.StatusCode = (int)statusCode;
 
-                if (exception is not ServerException)
+                if (serverException is not ServerException)
                     Program.PrintMessage("Произошла ошибка: " + exception.ToString());
             }
 
@@ -74,7 +80,7 @@ namespace HttpServer
             if (request.HttpMethod == "POST")
             {
                 var postData = GetRequestPostData(request);
-                strParams = (postData is not null) ? postData.Split('&').Select(p => p.Split('=')[1]).ToArray() : new string[0];
+                strParams = (postData is not null) ? postData.Split('&').Select(p => p.Split('=')[1]).ToArray() : Array.Empty<string>();
             }
 
             Guid? sessionId = GetSessionId(request);
@@ -88,11 +94,9 @@ namespace HttpServer
                 .ToArray();
 
             var methodResponse = (ControllerResponse)method.Invoke(null, queryParams);
-
             methodResponse.Action.Invoke(response);
 
             var view = methodResponse.View;
-
             if (view is not null)
             {
                 view.CurrentUser = UserController.GetUserBySessionId(sessionId ?? Guid.Empty);

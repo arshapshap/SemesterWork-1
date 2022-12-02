@@ -73,7 +73,7 @@ namespace HttpServer.Controllers
 
             var user = userDAO.Select(id);
             if (user == null)
-                throw new ServerException(HttpStatusCode.Unauthorized);
+                throw new ServerException(HttpStatusCode.NotFound);
 
             var view = new View("pages/profile", new { CurrentUser = currentUser, User = user });
             return new ControllerResponse(view);
@@ -83,7 +83,7 @@ namespace HttpServer.Controllers
         public static ControllerResponse ShowUserProfile(string login, Guid sessionId)
         {
             var user = userDAO.Select(login)
-                ?? throw new ServerException(HttpStatusCode.Unauthorized);
+                ?? throw new ServerException(HttpStatusCode.NotFound);
 
             return ShowUserProfile(user.Id, sessionId);
         }
