@@ -24,6 +24,8 @@ namespace HttpServer.ORM
 
         public int Insert(Publication publication) => orm.Insert(publication);
 
+        public void Update(int id, Publication publication) => orm.Update(id, publication);
+
         public void Delete(int id) => orm.Delete(id);
     }
 }

@@ -29,7 +29,7 @@ namespace HttpServer.ORM
 
         public T[] SelectWhere<T>(Dictionary<string, object> conditions)
         {
-            var stringConditions = conditions.Select(c => $"{c.Key}=N'{c.Value}'");
+            var stringConditions = conditions.Select(c => $"{c.Key}=N'{c.Value.ToString().Replace("'", "''")}'");
             string sqlExpression = $"SELECT * FROM [dbo].[{TableName}] WHERE {string.Join(" AND ", stringConditions)}";
 
             return ExecuteQuery<T>(sqlExpression);
@@ -70,7 +70,7 @@ namespace HttpServer.ORM
                 .GetProperties(BindingFlags.Public | BindingFlags.Instance)
                 .Where(p => p.GetCustomAttribute(typeof(FieldDB)) is not null)
                 .Select(p =>
-                    $"{((FieldDB)p.GetCustomAttribute(typeof(FieldDB))).ColumnName} = '{p.GetValue(item)}'");
+                    $"{((FieldDB)p.GetCustomAttribute(typeof(FieldDB))).ColumnName} = {(((FieldDB)p.GetCustomAttribute(typeof(FieldDB))).IsCyrillic ? "N" : "")}'{p.GetValue(item).ToString().Replace("'", "''")}'");
 
             string sqlExpression = $"UPDATE [dbo].[{TableName}] SET {string.Join(',', changes)} WHERE id={id}";
 
@@ -80,7 +80,7 @@ namespace HttpServer.ORM
 
         public void DeleteWhere(Dictionary<string, object> conditions)
         {
-            var stringConditions = conditions.Select(c => $"{c.Key}=N'{c.Value}'");
+            var stringConditions = conditions.Select(c => $"{c.Key}=N'{c.Value.ToString().Replace("'", "''")}'");
             string sqlExpression = $"DELETE FROM [dbo].[{TableName}] WHERE {string.Join(" AND ", stringConditions)}";
 
             ExecuteNonQuery(sqlExpression);

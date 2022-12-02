@@ -52,6 +52,43 @@ namespace HttpServer.Controllers
             return new ControllerResponse(action: redirectAction);
         }
 
+        [HttpGET("^edit$")]
+        public static ControllerResponse ShowEditingPage(string _, int publicationId, Guid sessionId)
+        {
+            var currentUser = UserController.GetUserBySessionId(sessionId)
+               ?? throw new ServerException(HttpStatusCode.Unauthorized);
+
+            var publication = publicationDAO.Select(publicationId)
+                ?? throw new ServerException(HttpStatusCode.NotFound);
+
+            if (currentUser.Id != publication.AuthorId)
+                throw new ServerException(HttpStatusCode.Forbidden);
+
+            var view = new View("pages/publication", new { IsEditing = true, Publication = publication, CurrentUser = currentUser });
+            return new ControllerResponse(view);
+        }
+
+        [HttpPOST("^edit$")]
+        public static ControllerResponse Edit(int publicationId, string text, Guid sessionId)
+        {
+            var currentUser = UserController.GetUserBySessionId(sessionId)
+               ?? throw new ServerException(HttpStatusCode.Unauthorized);
+
+            var publication = publicationDAO.Select(publicationId)
+                ?? throw new ServerException(HttpStatusCode.NotFound);
+
+            if (currentUser.Id != publication.AuthorId)
+                throw new ServerException(HttpStatusCode.Forbidden);
+
+            publication.Text = HttpUtility.UrlDecode(text);
+            publicationDAO.Update(publicationId, publication);
+
+            var redirectAction = (HttpListenerResponse response)
+                => response.Redirect($"/publication/{publicationId}");
+
+            return new ControllerResponse(action: redirectAction);
+        }
+
         [HttpPOST("^delete$")]
         public static ControllerResponse Delete(int publicationId, Guid sessionId)
         {
@@ -61,11 +98,10 @@ namespace HttpServer.Controllers
             var publication = publicationDAO.Select(publicationId)
                 ?? throw new ServerException(HttpStatusCode.NotFound);
 
-            if (currentUser.Id == publication.AuthorId)
-                publicationDAO.Delete(publicationId);
-            else
+            if (currentUser.Id != publication.AuthorId)
                 throw new ServerException(HttpStatusCode.Forbidden);
 
+            publicationDAO.Delete(publicationId);
             var redirectAction = (HttpListenerResponse response) 
                 => response.Redirect($"/main");
 
@@ -90,7 +126,7 @@ namespace HttpServer.Controllers
         }
 
         [HttpGET("^$")]
-        public static ControllerResponse ShowCreationPublicationPage(Guid sessionId)
+        public static ControllerResponse ShowCreationPage(Guid sessionId)
         {
             var currentUser = UserController.GetUserBySessionId(sessionId)
                 ?? throw new ServerException(HttpStatusCode.Unauthorized);

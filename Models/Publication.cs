@@ -17,7 +17,7 @@ namespace HttpServer.Models
             AuthorId = userId;
             MusicianId = musicianId;
             Title = title;
-            Text = Format(text);
+            Text = text;
             DateTime = date;
         }
 
@@ -38,10 +38,12 @@ namespace HttpServer.Models
         public string Title { get;}
 
         [FieldDB("text", isCyrillic: true)]
-        public string Text { get; }
+        public string Text { get; set; }
 
         [FieldDB("date")]
         public string SqlDate { get => DateTime.ToString("yyyy-MM-dd"); }
+
+        public string FormattedText { get => Format(Text); }
 
         public string Date { get => DateTime.ToString("dd.MM.yyyy"); }
 

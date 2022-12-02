@@ -10,7 +10,8 @@
 </head>
 <script src="~/scripts/auto_height.js"></script>
 <script src="~/scripts/scroll_into_element.js"></script>
-<body class="body" onload="scroll_into_element('comment_{{ focused_comment_id }}')">
+<script src="~/scripts/take_changes.js"></script>
+<body class="body" onload="scroll_into_element('comment_{{ focused_comment_id }}'); {{ if is_editing}} auto_height('text-textarea'); {{ end }}">
     <div class="container">
         <div class="header-left">
             <a href="/main">
@@ -39,17 +40,33 @@
                     </div>
                 </div>
             </div>
-
-            <pre class="chords">
-                {{ publication.text }}
-            </pre>
+            {{ if !is_editing}}
+                <pre class="chords">{{ publication.formatted_text }}</pre>
+            {{ else }}
+                <textarea id="text-textarea" class="textarea field-input" name="text" type="text" required="required"
+                    oninput="auto_height('text-textarea')">{{ publication.text }}</textarea>
+            {{ end }}
         </div>
 
         {{ if current_user && (current_user.id == publication.author.id) }}
-        <form name="delete-publication" method="POST" action="/publication/delete">
-            <input type="hidden" name="publication_id" value="{{ publication.id }}">
-            <button class="button button-auto-size button-small">Удалить публикацию</button>
-        </form>
+        <div class="div-flex">
+            {{ if !is_editing}}
+            <form name="edit-publication" method="GET" action="/publication/edit/{{ publication.id }}">
+                <button class="button button-auto-size button-small">Изменить публикацию</button>
+            </form>
+            {{ else }}
+            <form name="edit-publication" method="POST" action="/publication/edit/{{ publication.id }}" 
+                onsubmit="take_changes('text-textarea', 'text-input'); return true;">
+                <input type="hidden" value="{{ publication.id }}" name="id">
+                <input id="text-input" type="hidden" value="" name="text">
+                    <button class="button button-auto-size button-small">Сохранить изменения</button>
+            </form>
+            {{ end }}
+            <form name="delete-publication" method="POST" action="/publication/delete">
+                <input type="hidden" name="publication_id" value="{{ publication.id }}">
+                <button class="button button-auto-size button-small">Удалить публикацию</button>
+            </form>
+        </div>
         {{ end }}
 
         {{ if current_user }}

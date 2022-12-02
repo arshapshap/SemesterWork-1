@@ -1,4 +1,4 @@
-<div class="publication comment">
+<div class="publication div-flex">
 <a href="/profile/{{ comment.author.id }}">
     <img class="profile-image comment-author-image" src="{{ comment.author.image }}" alt="">
 </a>
