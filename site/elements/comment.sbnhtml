@@ -2,7 +2,7 @@
 <a href="/profile/{{ comment.author.id }}">
     <img class="profile-image comment-author-image" src="{{ comment.author.image }}" alt="">
 </a>
-<div class="publication-info">
+<div id="comment_{{comment.id}}" class="publication-info">
     <div class="comment-body">
         <a href="/profile/{{ comment.author.id }}" class="publication-author link">{{
             comment.author.name }}</a>, {{ comment.date }}

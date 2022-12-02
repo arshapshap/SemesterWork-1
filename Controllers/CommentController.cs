@@ -27,10 +27,10 @@ namespace HttpServer.Controllers
                 ?? throw new ServerException(HttpStatusCode.NotFound);
 
             var comment = new Comment(publicationId, user.Id, HttpUtility.UrlDecode(text), DateTime.Now);
-            commentDAO.Insert(comment);
+            var commentId = commentDAO.Insert(comment);
 
             var redirectAction = (HttpListenerResponse response)
-                => response.Redirect($"/publication/{publicationId}");
+                => response.Redirect($"/publication/{publicationId}/{commentId}");
 
             return new ControllerResponse(action: redirectAction);
         }
@@ -49,8 +49,9 @@ namespace HttpServer.Controllers
             else
                 throw new ServerException(HttpStatusCode.Forbidden);
 
+            commentDAO.Delete(comment.Id);
             var redirectAction = (HttpListenerResponse response)
-                => response.Redirect($"/publication/{comment.PublicationId}");
+                => response.Redirect($"/publication/{comment.PublicationId}/{commentId}");
 
             return new ControllerResponse(action: redirectAction);
         }

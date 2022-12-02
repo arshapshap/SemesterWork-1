@@ -73,7 +73,7 @@ namespace HttpServer.Controllers
         }
 
         [HttpGET(@"^\d+$")]
-        public static ControllerResponse ShowPublication(int id, Guid sessionId)
+        public static ControllerResponse ShowPublication(int id, int focusedCommentId, Guid sessionId)
         {
             var currentUser = UserController.GetUserBySessionId(sessionId);
 
@@ -82,12 +82,15 @@ namespace HttpServer.Controllers
 
             var isRatingAvailable = !(currentUser is not null && (publication.AuthorId == currentUser.Id || RatingController.GetRating(id, currentUser.Id) is not null));
 
-            var view = new View("pages/publication", new { Publication = publication, CurrentUser = currentUser, IsRatingAvailable = isRatingAvailable });
+            if (publication.Comments.Where(c => c.Id == focusedCommentId).FirstOrDefault() == null)
+                focusedCommentId = publication.Comments.Where(c => c.Id < focusedCommentId).FirstOrDefault()?.Id ?? 0;
+
+            var view = new View("pages/publication", new { FocusedCommentId = focusedCommentId, Publication = publication, CurrentUser = currentUser, IsRatingAvailable = isRatingAvailable });
             return new ControllerResponse(view);
         }
 
         [HttpGET("^$")]
-        public static ControllerResponse ShowNewPublicationPage(Guid sessionId)
+        public static ControllerResponse ShowCreationPublicationPage(Guid sessionId)
         {
             var currentUser = UserController.GetUserBySessionId(sessionId)
                 ?? throw new ServerException(HttpStatusCode.Unauthorized);

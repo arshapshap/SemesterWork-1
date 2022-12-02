@@ -42,5 +42,7 @@ namespace HttpServer.Models
         public DateTime DateTime { get; }
 
         public User? Author { get => UserController.GetUserById(AuthorId); }
+
+        public bool IsEditing { get; set; }
     }
 }

@@ -89,7 +89,10 @@ namespace HttpServer
 
             var queryParams = method.GetParameters()
                 .SkipLast(1)
-                .Select((p, i) => Convert.ChangeType(strParams[i], p.ParameterType))
+                .Select((p, i) 
+                    => (i < strParams.Length) 
+                        ? Convert.ChangeType(strParams[i], p.ParameterType) 
+                        : GetDefaultValue(p.ParameterType.GetType()))
                 .Append(sessionId)
                 .ToArray();
 
@@ -192,6 +195,14 @@ namespace HttpServer
 
             var view = new View("pages/error", new { ErrorCode = (int)statusCode, ErrorDescription = errorDescription });
             return (Encoding.UTF8.GetBytes(view.GetHTML(path)), "text/html");
+        }
+
+        private static object GetDefaultValue(Type type)
+        {
+            if (type.IsValueType)
+                return Activator.CreateInstance(type);
+
+            return null;
         }
     }
 

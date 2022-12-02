@@ -53,7 +53,7 @@ namespace HttpServer.Models
             } }
         public string RatingString { get => Rating.ToString("0.0", System.Globalization.CultureInfo.GetCultureInfo("en-US")); }
 
-        public Comment[] Comments { get => CommentController.GetCommentsOnPublication(Id).OrderByDescending(c => c.Id).ToArray() ; }
+        public Comment[] Comments { get => CommentController.GetCommentsOnPublication(Id).OrderByDescending(c => c.Id).ToArray(); }
 
         public User? Author { get => UserController.GetUserById(AuthorId);}
 
