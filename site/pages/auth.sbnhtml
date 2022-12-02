@@ -35,15 +35,7 @@
                     {{ end }}
                 </div>
             </div>
-            <div class="remember-me">
-                <div>
-                    <input class="checkbox-hided" type="checkbox" id="remember-me">
-                    <div class="checkbox">
-                        <img class="checkmark" src="~/img/checkmark.png">
-                    </div>
-                </div>
-                <label for="remember-me" class="remember-me-text">Запомнить меня</label>
-            </div>
+            {{ include 'elements/remember-me.sbnhtml' }}
             <button class="button" type="submit">Авторизоваться</button>
             <div class="bottom-hint">
                 <span>Нет аккаунта?

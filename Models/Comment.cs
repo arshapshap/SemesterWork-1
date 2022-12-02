@@ -41,6 +41,6 @@ namespace HttpServer.Models
 
         public DateTime DateTime { get; }
 
-        public User Author { get => UserController.GetUserById(AuthorId); }
+        public User? Author { get => UserController.GetUserById(AuthorId); }
     }
 }

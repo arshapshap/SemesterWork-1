@@ -1,0 +1,10 @@
+<div class="remember-me">
+    <div>
+        <input class="checkbox-hided" type="checkbox" value="True" id="remember-me" name="remember-me">
+        <input type='hidden' value='False' name='remember-me'>
+        <div class="checkbox">
+            <img class="checkmark" src="~/img/checkmark.png">
+        </div>
+    </div>
+    <label for="remember-me" class="remember-me-text">Запомнить меня</label>
+</div>

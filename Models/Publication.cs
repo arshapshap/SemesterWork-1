@@ -55,7 +55,7 @@ namespace HttpServer.Models
 
         public Comment[] Comments { get => CommentController.GetCommentsOnPublication(Id).OrderByDescending(c => c.Id).ToArray() ; }
 
-        public User Author { get => UserController.GetUserById(AuthorId);}
+        public User? Author { get => UserController.GetUserById(AuthorId);}
 
         public Musician Musician { get => MusicianController.GetMusicianById(MusicianId); }
 

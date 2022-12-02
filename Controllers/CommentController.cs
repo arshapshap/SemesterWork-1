@@ -20,14 +20,11 @@ namespace HttpServer.Controllers
         [HttpPOST("^$")]
         public static ControllerResponse Create(int publicationId, string text, Guid sessionId)
         {
-            var user = UserController.GetUserBySessionId(sessionId);
-            if (user is null)
-                throw new ServerException(HttpStatusCode.Unauthorized);
+            var user = UserController.GetUserBySessionId(sessionId)
+                ?? throw new ServerException(HttpStatusCode.Unauthorized);
 
-            var publication = PublicationController.GetPublication(publicationId);
-
-            if (publication is null)
-                throw new ServerException(HttpStatusCode.NotFound);
+            var publication = PublicationController.GetPublication(publicationId)
+                ?? throw new ServerException(HttpStatusCode.NotFound);
 
             var comment = new Comment(publicationId, user.Id, HttpUtility.UrlDecode(text), DateTime.Now);
             commentDAO.Insert(comment);
@@ -41,14 +38,11 @@ namespace HttpServer.Controllers
         [HttpPOST("^delete$")]
         public static ControllerResponse Delete(int commentId, Guid sessionId)
         {
-            var user = UserController.GetUserBySessionId(sessionId);
-            if (user is null)
-                throw new ServerException(HttpStatusCode.Unauthorized);
+            var user = UserController.GetUserBySessionId(sessionId)
+                ?? throw new ServerException(HttpStatusCode.Unauthorized);
 
-            var comment = commentDAO.Select(commentId);
-
-            if (comment is null)
-                throw new ServerException(HttpStatusCode.NotFound);
+            var comment = commentDAO.Select(commentId)
+                ?? throw new ServerException(HttpStatusCode.NotFound);
 
             if (user.Id == comment.AuthorId)
                 commentDAO.Delete(comment.Id);

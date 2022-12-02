@@ -29,9 +29,8 @@ namespace HttpServer.Controllers
         [HttpPOST("^new$")]
         public static ControllerResponse Create(string musicianName, string title, string text, Guid sessionId)
         {
-            var currentUser = UserController.GetUserBySessionId(sessionId);
-            if (currentUser is null)
-                throw new ServerException(HttpStatusCode.Unauthorized);
+            var currentUser = UserController.GetUserBySessionId(sessionId)
+                ?? throw new ServerException(HttpStatusCode.Unauthorized);
 
             var musician = MusicianController.GetMusicianByName(musicianName);
             if (musician is null)
@@ -56,18 +55,16 @@ namespace HttpServer.Controllers
         [HttpPOST("^delete$")]
         public static ControllerResponse Delete(int publicationId, Guid sessionId)
         {
-            var currentUser = UserController.GetUserBySessionId(sessionId);
-            if (currentUser is null)
-                throw new ServerException(HttpStatusCode.Unauthorized);
+            var currentUser = UserController.GetUserBySessionId(sessionId)
+                ?? throw new ServerException(HttpStatusCode.Unauthorized);
 
-            var publication = publicationDAO.Select(publicationId);
-            if (publication is null)
-                throw new ServerException(HttpStatusCode.NotFound);
+            var publication = publicationDAO.Select(publicationId)
+                ?? throw new ServerException(HttpStatusCode.NotFound);
 
             if (currentUser.Id == publication.AuthorId)
                 publicationDAO.Delete(publicationId);
             else
-                throw new ServerException(HttpStatusCode.NotFound);
+                throw new ServerException(HttpStatusCode.Forbidden);
 
             var redirectAction = (HttpListenerResponse response) 
                 => response.Redirect($"/main");
@@ -80,9 +77,8 @@ namespace HttpServer.Controllers
         {
             var currentUser = UserController.GetUserBySessionId(sessionId);
 
-            var publication = publicationDAO.Select(id);
-            if (publication is null)
-                throw new ServerException(HttpStatusCode.NotFound);
+            var publication = publicationDAO.Select(id)
+                ?? throw new ServerException(HttpStatusCode.NotFound);
 
             var isRatingAvailable = !(currentUser is not null && (publication.AuthorId == currentUser.Id || RatingController.GetRating(id, currentUser.Id) is not null));
 
@@ -93,9 +89,8 @@ namespace HttpServer.Controllers
         [HttpGET("^$")]
         public static ControllerResponse ShowNewPublicationPage(Guid sessionId)
         {
-            var currentUser = UserController.GetUserBySessionId(sessionId);
-            if (currentUser is null)
-                throw new ServerException(HttpStatusCode.Unauthorized);
+            var currentUser = UserController.GetUserBySessionId(sessionId)
+                ?? throw new ServerException(HttpStatusCode.Unauthorized);
 
             var view = new View("pages/new-publication", new { CurrentUser = currentUser, EnteredInfo = new { } });
             return new ControllerResponse(view);

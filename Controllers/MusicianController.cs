@@ -24,9 +24,8 @@ namespace HttpServer.Controllers
         {
             var currentUser = UserController.GetUserBySessionId(sessionId);
 
-            var musician = musicianDAO.Select(id);
-            if (musician is null)
-                throw new ServerException(HttpStatusCode.NotFound);
+            var musician = musicianDAO.Select(id)
+                ?? throw new ServerException(HttpStatusCode.NotFound);
 
             var view = new View("pages/musician", new { Musician = musician, CurrentUser = currentUser });
             return new ControllerResponse(view);

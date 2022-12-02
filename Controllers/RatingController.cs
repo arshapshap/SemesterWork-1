@@ -21,13 +21,11 @@ namespace HttpServer.Controllers
         [HttpPOST("^$")]
         public static ControllerResponse Create(int publicationId, int points, Guid sessionId)
         {
-            var currentUser = UserController.GetUserBySessionId(sessionId);
-            if (currentUser is null)
-                throw new ServerException(HttpStatusCode.Unauthorized);
+            var currentUser = UserController.GetUserBySessionId(sessionId)
+                ?? throw new ServerException(HttpStatusCode.Unauthorized);
 
-            var publication = PublicationController.GetPublication(publicationId);
-            if (publication is null)
-                throw new ServerException(HttpStatusCode.NotFound);
+            var publication = PublicationController.GetPublication(publicationId)
+                ?? throw new ServerException(HttpStatusCode.NotFound);
 
             if (currentUser.Id == publication.AuthorId || GetRating(publicationId, currentUser.Id) is not null)
                 throw new ServerException(HttpStatusCode.Forbidden);

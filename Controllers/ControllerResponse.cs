@@ -14,7 +14,7 @@ namespace HttpServer.Controllers
         public readonly Action<HttpListenerResponse> Action;
 
         public ControllerResponse(View? response = null, 
-            Action<HttpListenerResponse> action = null)
+            Action<HttpListenerResponse>? action = null)
         {
             this.View = response;
             this.Action = (action is null) ? (HttpListenerResponse) => { } : action;

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace HttpServer.Models
 {
-    class User
+    internal class User
     {
         public int Id { get; }
 

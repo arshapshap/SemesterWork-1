@@ -15,70 +15,30 @@ namespace HttpServer.ORM
         public string TableName;
         readonly string connectionString;
 
-        public MyORM(string connectionString)
+        public MyORM(string connectionString, string tableName)
         {
             this.connectionString = connectionString;
-        }
-
-        public MyORM(string connectionString, string tableName) : this(connectionString)
-        {
             TableName = tableName;
         }
 
         public T[] Select<T>()
         {
-            var result = new List<T>();
-
             string sqlExpression = $"SELECT * FROM [dbo].[{TableName}]";
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                SqlCommand command = new SqlCommand(sqlExpression, connection);
-                SqlDataReader reader = command.ExecuteReader();
-
-                if (reader.HasRows)
-                {
-                    while (reader.Read())
-                    {
-                        var newItem = Activator.CreateInstance(typeof(T), GetValues(reader));
-                        if (newItem is T item)
-                            result.Add(item);
-                    }
-                }
-
-                reader.Close();
-            }
-            return result.ToArray();
+            return ExecuteQuery<T>(sqlExpression);
         }
 
         public T[] SelectWhere<T>(Dictionary<string, object> conditions)
         {
-            var result = new List<T>();
-
             var stringConditions = conditions.Select(c => $"{c.Key}=N'{c.Value}'");
             string sqlExpression = $"SELECT * FROM [dbo].[{TableName}] WHERE {string.Join(" AND ", stringConditions)}";
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                SqlCommand command = new SqlCommand(sqlExpression, connection);
-                SqlDataReader reader = command.ExecuteReader();
 
-                if (reader.HasRows)
-                {
-                    while (reader.Read())
-                    {
-                        var newItem = Activator.CreateInstance(typeof(T), GetValues(reader));
-                        if (newItem is T item)
-                            result.Add(item);
-                    }
-                }
-
-                reader.Close();
-            }
-            return result.ToArray();
+            return ExecuteQuery<T>(sqlExpression);
         }
 
-        public T? Select<T>(int id) => SelectWhere<T>(new Dictionary<string, object>() { { "id", id } }).FirstOrDefault();
+        public T? Select<T>(int id) => Select<T>("id", id.ToString());
+
+        public T? Select<T>(string primaryKeyColumn, string primaryKeyValue) 
+            => SelectWhere<T>(new Dictionary<string, object>() { { primaryKeyColumn, primaryKeyValue } }).FirstOrDefault();
 
         public int Insert<T>(T item, bool idExists = true)
         {
@@ -114,6 +74,25 @@ namespace HttpServer.ORM
 
             string sqlExpression = $"UPDATE [dbo].[{TableName}] SET {string.Join(',', changes)} WHERE id={id}";
 
+            ExecuteNonQuery(sqlExpression);
+        }
+        
+
+        public void DeleteWhere(Dictionary<string, object> conditions)
+        {
+            var stringConditions = conditions.Select(c => $"{c.Key}=N'{c.Value}'");
+            string sqlExpression = $"DELETE FROM [dbo].[{TableName}] WHERE {string.Join(" AND ", stringConditions)}";
+
+            ExecuteNonQuery(sqlExpression);
+        }
+
+        public void Delete(int id) => Delete("id", id.ToString());
+
+        public void Delete(string primaryKeyColumn, string primaryKeyValue) 
+            => DeleteWhere(new Dictionary<string, object>() { { primaryKeyColumn, primaryKeyValue } });
+
+        private void ExecuteNonQuery(string sqlExpression)
+        {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
@@ -122,16 +101,28 @@ namespace HttpServer.ORM
             }
         }
 
-        public void Delete(int id)
+        private T[] ExecuteQuery<T>(string sqlExpression)
         {
-            string sqlExpression = $"DELETE FROM [dbo].[{TableName}] WHERE id={id}";
-
+            var result = new List<T>();
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand(sqlExpression, connection);
-                command.ExecuteNonQuery();
+                SqlDataReader reader = command.ExecuteReader();
+
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        var newItem = Activator.CreateInstance(typeof(T), GetValues(reader));
+                        if (newItem is T item)
+                            result.Add(item);
+                    }
+                }
+
+                reader.Close();
             }
+            return result.ToArray();
         }
 
         private object[] GetValues(SqlDataReader reader)

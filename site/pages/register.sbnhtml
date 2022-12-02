@@ -46,15 +46,7 @@
                     <div id="password-confirm-hint" class="js-hint field-hint">Пароли должны совпадать</div>
                 </div>
             </div>
-            <div class="remember-me">
-                <div>
-                    <input class="checkbox-hided" type="checkbox" id="remember-me">
-                    <div class="checkbox">
-                        <img class="checkmark" src="~/img/checkmark.png">
-                    </div>
-                </div>
-                <label for="remember-me" class="remember-me-text">Запомнить меня</label>
-            </div>
+            {{ include 'elements/remember-me.sbnhtml' }}
             <button class="button" type="submit">Зарегистрироваться</button>
             <div class="bottom-hint">
                 <span>Есть аккаунт?

@@ -22,7 +22,7 @@ namespace HttpServer.Controllers
             = new UserDAO(MainController.DatabaseConnectionString);
 
         [HttpPOST("^login$")]
-        public static ControllerResponse Login(string login, string password, Guid sessionId)
+        public static ControllerResponse Login(string login, string password, bool rememberMe, Guid sessionId)
         {
             var user = userDAO.Select(login, HashService.Hash(password));
             if (user is null)
@@ -31,7 +31,7 @@ namespace HttpServer.Controllers
                 return new ControllerResponse(new View("pages/auth", new { IncorrectPassword = true, EnteredInfo = entered }));
             }
 
-            var session = SessionManager.Instance.CreateSession(user.Id, user.Login);
+            var session = SessionManager.Instance.CreateSession(user.Id, rememberMe);
 
             var action =
                 (HttpListenerResponse response) =>
@@ -45,7 +45,7 @@ namespace HttpServer.Controllers
         }
 
         [HttpPOST("^register$")]
-        public static ControllerResponse Register(string login, string name, string password, Guid sessionId)
+        public static ControllerResponse Register(string login, string name, string password, bool rememberMe, Guid sessionId)
         {
             if (userDAO.Select(login) is not null)
             {
@@ -54,7 +54,7 @@ namespace HttpServer.Controllers
             }
 
             userDAO.Insert(new User(login, HashService.Hash(password), HttpUtility.UrlDecode(name)));
-            return Login(login, password, sessionId);
+            return Login(login, password, rememberMe, sessionId);
         }
 
         [HttpPOST("^logout$")]
@@ -72,7 +72,7 @@ namespace HttpServer.Controllers
             var currentUser = GetUserBySessionId(sessionId);
 
             var user = userDAO.Select(id);
-            if (user is null)
+            if (user == null)
                 throw new ServerException(HttpStatusCode.Unauthorized);
 
             var view = new View("pages/profile", new { CurrentUser = currentUser, User = user });
@@ -82,9 +82,8 @@ namespace HttpServer.Controllers
         [HttpGET("^[a-zA-Z0-9_]+$")]
         public static ControllerResponse ShowUserProfile(string login, Guid sessionId)
         {
-            var user = userDAO.Select(login);
-            if (user is null)
-                throw new ServerException(HttpStatusCode.Unauthorized);
+            var user = userDAO.Select(login)
+                ?? throw new ServerException(HttpStatusCode.Unauthorized);
 
             return ShowUserProfile(user.Id, sessionId);
         }
@@ -92,20 +91,22 @@ namespace HttpServer.Controllers
         [HttpGET("^$")]
         public static ControllerResponse ShowCurrentUserProfile(Guid sessionId)
         {
-            var session = SessionManager.Instance.GetSession(sessionId);
+            var session = SessionManager.Instance.GetSession(sessionId) 
+                ?? throw new ServerException(HttpStatusCode.Unauthorized);
+
             return ShowUserProfile(session.AccountId, sessionId);
         }
 
         public static User? GetUserBySessionId(Guid sessionId)
         {
-            if (!SessionManager.Instance.CheckSession(sessionId))
+            var session = SessionManager.Instance.GetSession(sessionId);
+            if (session == null)
                 return null;
 
-            var session = SessionManager.Instance.GetSession(sessionId);
             return userDAO.Select(session.AccountId);
         }
 
-        public static User GetUserById(int id)
+        public static User? GetUserById(int id)
         {
             var user = userDAO.Select(id);
             return user;

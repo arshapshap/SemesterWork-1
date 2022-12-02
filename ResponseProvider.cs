@@ -35,7 +35,7 @@ namespace HttpServer
                 response.StatusCode = (int)statusCode;
 
                 if (exception is not ServerException)
-                    Program.PrintMessage("Произошла ошибка: " + exception.Message);
+                    Program.PrintMessage("Произошла ошибка: " + exception.ToString());
             }
 
             response.Headers.Set("Content-Type", serverResponse?.contentType);
