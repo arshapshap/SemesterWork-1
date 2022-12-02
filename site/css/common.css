@@ -117,7 +117,7 @@
 }
 
 .profile-image {
-    object-fit: cover;
+    object-fit: fill;
     width: 76px;
     height: 76px;
     cursor: pointer;
@@ -166,7 +166,6 @@
 }
 
 .publication-image {
-    object-fit: cover;
     border-radius: 13px;
     margin: 12px;
 }

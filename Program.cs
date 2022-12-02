@@ -20,7 +20,7 @@ namespace HttpServer
         }
         internal static void PrintMessage(string message)
         {
-            Console.WriteLine($"\n >>> {message}");
+            Console.WriteLine($"\n { DateTime.Now } >>> {message}");
         }
 
         private static Action recognizeCommand(HttpServer httpServer, string command)

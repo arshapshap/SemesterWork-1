@@ -39,11 +39,11 @@
                 </div>
             </div>
 
-            {{ if !is_editing}}
+            {{ if !is_editing && (current_user.id == user.id)}}
             <form name="edit-user" method="GET" action="/profile/edit/{{ user.id }}">
                 <button class="button button-auto-size button-small">Изменить профиль</button>
             </form>
-            {{ else }}
+            {{ else if (current_user.id == user.id)}}
             <form name="edit-user" method="POST" action="/profile/edit/{{ user.id }}" 
                 onsubmit="return take_changes('name-input', 'text-input');"
                 autocomplete="off">
