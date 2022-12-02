@@ -10,9 +10,10 @@
     <link rel="stylesheet" href="~/css/profile.css">
     <title>{{ user.name }}</title>
 </head>
-
+<script src="~/scripts/take_changes.js"></script>
+<script src="~/scripts/check_form.js"></script>
+<script src="~/scripts/show_password_confirm.js"></script>
 <body>
-
     <body class="body">
         <div class="container">
             <div class="header-left">
@@ -26,21 +27,57 @@
                     <img class="publication-image user-image" src="{{ user.image }}">
                     <div class="publication-info">
                         <div class="publication-title">
-                            <a class="link login-link">{{ user.login }}</a>
-                            <br>{{ user.name }}
+                            <a class="link login-link">{{ user.login }}</a><br>
+                            {{ if !is_editing }}
+                                {{ user.name }}
+                            {{ else }}
+                                <input class="field-input" type="text" id="name-input" value="{{ user.name }}" name="name" 
+                                    required maxlength="50" onchange="check_name(this)">
+                            {{ end }}
                         </div>
                     </div>
                 </div>
             </div>
 
+            {{ if !is_editing}}
+            <form name="edit-user" method="GET" action="/profile/edit/{{ user.id }}">
+                <button class="button button-auto-size button-small">Изменить профиль</button>
+            </form>
+            {{ else }}
+            <form name="edit-user" method="POST" action="/profile/edit/{{ user.id }}" 
+                onsubmit="return take_changes('name-input', 'text-input');"
+                autocomplete="off">
+                <input type="hidden" value="{{ user.id }}" name="id">
+                <input id="text-input" type="hidden" value="" name="text">
+                <div>
+                    <div><br>Изображение (ссылка)</div>
+                    <input class="field-input" value="{{ if user.image != '~/img/profile.png' }}{{ user.image }}{{ end }}" 
+                        type="text" name="image"
+                        autocomplete="false" readonly onfocus="this.removeAttribute('readonly');">
+                    <div><br>Пароль</div>
+                    <input class="field-input" type="password" id="password" name="password" minlength="8" maxlength="50"
+                        oninput="show_password_confirm(this, 'div-password-confirm')"
+                        autocomplete="false" readonly onfocus="this.removeAttribute('readonly');">
+                    <div id="div-password-confirm">
+                        <div><br>Подтвердите пароль</div>
+                        <input class="field-input" type="password" id="password-confirm" minlength="8" maxlength="50" 
+                            onchange="match_password('password', 'password-confirm', 'password-confirm-hint')">
+                        <div id="password-confirm-hint" class="js-hint field-hint">Пароли должны совпадать</div>
+                    </div>
+                </div>
+                <br>
+                <button class="button button-auto-size button-small">Сохранить изменения</button>
+            </form>
+            {{ end }}
+
             <div class="publications">
                 {{ if user.publications.size > 0 }}
-                <div class="div-title">Публикации пользователя:</div>
-                {{ for publication in user.publications }}
-                    {{ include 'elements/publication.sbnhtml' publication }}
-                {{ end }}
-                {{ else }}
-                <div class="div-title">Пользователь ничего не публиковал.</div>
+                    <div class="div-title">Публикации пользователя:</div>
+                    {{ for publication in user.publications }}
+                        {{ include 'elements/publication.sbnhtml' publication }}
+                    {{ end }}
+                    {{ else }}
+                    <div class="div-title">Пользователь ничего не публиковал.</div>
                 {{ end }}
             </div>
         </div>

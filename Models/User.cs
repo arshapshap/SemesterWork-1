@@ -16,12 +16,12 @@ namespace HttpServer.Models
         public string Login { get; }
 
         [FieldDB("password")]
-        public string HashedPassword { get; }
+        public string HashedPassword { get; set; }
 
         [FieldDB("name", isCyrillic: true)]
         public string Name { get; set; }
 
-        [FieldDB("image")]
+        [FieldDB("image", isCyrillic: true)]
         public string Image { get; set; }
 
         public Publication[] Publications { get => PublicationController.GetUserPublications(Id).OrderByDescending(p => p.Rating).ToArray(); }

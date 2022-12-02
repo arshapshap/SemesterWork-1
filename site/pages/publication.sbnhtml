@@ -56,7 +56,7 @@
             </form>
             {{ else }}
             <form name="edit-publication" method="POST" action="/publication/edit/{{ publication.id }}" 
-                onsubmit="take_changes('text-textarea', 'text-input'); return true;">
+                onsubmit="return take_changes('text-textarea', 'text-input');">
                 <input type="hidden" value="{{ publication.id }}" name="id">
                 <input id="text-input" type="hidden" value="" name="text">
                     <button class="button button-auto-size button-small">Сохранить изменения</button>

@@ -66,6 +66,43 @@ namespace HttpServer.Controllers
             return new ControllerResponse(action: redirectAction);
         }
 
+        [HttpGET("^edit$")]
+        public static ControllerResponse ShowEditingPage(string _, int userId, Guid sessionId)
+        {
+            var currentUser = GetUserBySessionId(sessionId)
+               ?? throw new ServerException(HttpStatusCode.Unauthorized);
+
+            if (currentUser.Id != userId)
+                throw new ServerException(HttpStatusCode.Forbidden);
+
+            var view = new View("pages/profile", new { IsEditing = true, CurrentUser = currentUser, User = currentUser });
+            return new ControllerResponse(view);
+        }
+
+        [HttpPOST("^edit$")]
+        public static ControllerResponse Edit(int userId, string name, string imageURL, string password, Guid sessionId)
+        {
+            var currentUser = GetUserBySessionId(sessionId)
+               ?? throw new ServerException(HttpStatusCode.Unauthorized);
+
+            if (currentUser.Id != userId)
+               throw new ServerException(HttpStatusCode.Forbidden);
+
+            if (name != "")
+                currentUser.Name = HttpUtility.UrlDecode(name);
+            if (imageURL != "")
+                currentUser.Image = HttpUtility.UrlDecode(imageURL);
+            if (password != "")
+                currentUser.HashedPassword = HashService.Hash(password);
+
+            userDAO.Update(userId, currentUser);
+
+            var redirectAction = (HttpListenerResponse response)
+                => response.Redirect($"/profile");
+
+            return new ControllerResponse(action: redirectAction);
+        }
+
         [HttpGET(@"^\d+$")]
         public static ControllerResponse ShowUserProfile(int id, Guid sessionId)
         {

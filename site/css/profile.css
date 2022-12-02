@@ -1,9 +1,13 @@
 .publication-image {
+    object-fit: cover;
     width: 80px;
+    height: 80px;
 }
 
 .user-image {
+    object-fit: cover;
     width: 160px;
+    height: 160px;
 }
 
 .container {
@@ -16,4 +20,12 @@
 
 .publication-author {
     width: 100%;
+}
+
+#div-password-confirm {
+    display: none;
+}
+
+.js-hint {
+    display: none;
 }

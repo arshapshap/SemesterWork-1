@@ -42,7 +42,8 @@
                 </div>
                 <div class="field">
                     <span class="field-title">Подтвердите пароль</span>
-                    <input class="field-input" type="password" id="password-confirm" required="required" minlength="8" maxlength="50" onchange="match_password()">
+                    <input class="field-input" type="password" id="password-confirm" required="required" minlength="8" maxlength="50" 
+                        onchange="match_password('password', 'password-confirm', 'password-confirm-hint')">
                     <div id="password-confirm-hint" class="js-hint field-hint">Пароли должны совпадать</div>
                 </div>
             </div>

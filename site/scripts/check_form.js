@@ -10,7 +10,7 @@ function check_login(input) {
     if (document.getElementById("taken-login-hint") != null)
         document.getElementById("taken-login-hint").style.display = "none"
 
-    var systemWords = ["login", "register", "logout"]
+    var systemWords = ["login", "register", "logout", "edit"]
     if (!systemWords.includes(login)) {
         document.getElementById("system-login-hint").style.display = "none"
     }
@@ -41,15 +41,15 @@ function check_name(input) {
     }
 }
 
-function match_password() {
-    var pw1 = document.getElementById("password").value;
-    var pw2 = document.getElementById("password-confirm").value;
+function match_password(input1, input2, hint) {
+    var pw1 = document.getElementById(input1).value;
+    var pw2 = document.getElementById(input2).value;
     if (pw1 == pw2) {
-        document.getElementById("password-confirm-hint").style.display = "none"
+        document.getElementById(hint).style.display = "none"
         return true
     }
     else {
-        document.getElementById("password-confirm-hint").style.display = "block"
+        document.getElementById(hint).style.display = "block"
         return false
     }
 }
