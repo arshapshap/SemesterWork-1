@@ -1,6 +1,6 @@
 <div class="publication div-flex">
 <a href="/profile/{{ comment.author.id }}">
-    <img class="profile-image comment-author-image" src="{{ comment.author.image }}" alt="">
+    <img class="clickable-image small-image comment-author-image" src="{{ comment.author.image }}" alt="">
 </a>
 <div id="comment_{{comment.id}}" class="publication-info">
     <div class="comment-body">

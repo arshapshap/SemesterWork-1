@@ -1,5 +1,5 @@
 <div class="publication publication-clickable publication-header" onclick="location.href='/publication/{{ publication.id }}'">
-<img class="publication-image"
+<img class="small-image small-rounded-image"
     src="{{ publication.musician.image }}">
 <div class="publication-info">
     <div class="publication-title">{{ publication.musician.name }} - {{ publication.title }}</div>

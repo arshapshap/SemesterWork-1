@@ -6,7 +6,7 @@
         <a href="#" class="link" onclick="document.getElementById('logout').submit(); return false;">Выйти</a>
     </div>
     <a class="profile" href="/profile">
-        <img class="profile-image"
+        <img class="clickable-image small-image circular-image"
             src="{{current_user.image}}">
     </a>
     {{ else }}
@@ -16,7 +16,7 @@
         <a href="/register" class="link">зарегистрироваться</a>
     </div>
     <a class="profile" href="/auth">
-        <img class="profile-image" src="~/img/profile.png">
+        <img class="clickable-image small-image circular-image" src="~/img/profile.png">
     </a>
     {{ end }}
 </div>

@@ -3,7 +3,7 @@
     padding: 42px;
 }
 
-.publication-image {
+.big-image {
     object-fit: contain;
     width: 160px;
     height: 160px;
@@ -82,11 +82,12 @@
         scale: 0.8;
     }
 
-    .profile-image {
-        width: 38px;
+    .small-image {
+        width: 40px;
+        height: 40px;
     }
 
-    .publication-image {
+    .big-image {
         width: 80px;
     }
 

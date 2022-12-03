@@ -14,7 +14,7 @@
     <div class="container">
         <div class="header-left">
             <a href="/main">
-                <img class="profile-image" src="~/img/home.png">
+                <img class="clickable-image small-image" src="~/img/home.png">
             </a>
         </div>
         <div>

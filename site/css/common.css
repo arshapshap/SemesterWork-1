@@ -113,18 +113,34 @@
 }
 
 .profile {
+    margin: 12px;
     margin-left: 17px;
 }
 
-.profile-image {
-    object-fit: fill;
-    width: 76px;
-    height: 76px;
-    cursor: pointer;
+.rounded-image {
     border-radius: 38px;
 }
 
-.profile-image:hover {
+.small-rounded-image {
+    border-radius: 13px;
+    margin: 12px;
+}
+
+.circular-image {
+    border-radius: 500px;
+}
+
+.clickable-image {
+    object-fit: contain;
+    cursor: pointer;
+}
+
+.small-image {
+    width: 80px;
+    height: 80px
+}
+
+.clickable-image:hover {
     opacity: 0.8;
 }
 
@@ -165,8 +181,7 @@
     align-self: auto;
 }
 
-.publication-image {
-    border-radius: 13px;
+.big-image {
     margin: 12px;
 }
 
