@@ -16,9 +16,11 @@ namespace HttpServer.ORM
             orm = new MyORM(connectionString, "Sessions");
         }
 
-        public Session? Select(Guid guid) => orm.Select<Session>("guid", guid.ToString());
+        public Session? Select(Guid guid) 
+            => orm.Select<Session>("guid", guid.ToString());
 
-        public void Insert(Session session) => orm.Insert(session, idExists: false);
+        public void Insert(Session session) 
+            => orm.InsertAsync(session, idExists: false);
 
         public void Delete(Guid guid) => orm.Delete("guid", guid.ToString());
     }

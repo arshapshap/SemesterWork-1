@@ -17,14 +17,18 @@ namespace HttpServer.ORM
         }
 
         public User? Select(string login, string hashedPassword) 
-            => orm.SelectWhere<User>(new Dictionary<string, object>() { { "login", login }, { "password", hashedPassword } }).FirstOrDefault();
+            => orm.SelectWhereAsync<User>(new Dictionary<string, object>() { { "login", login }, { "password", hashedPassword } }).Result.FirstOrDefault();
 
-        public User? Select(int id) => orm.Select<User>(id);
+        public User? Select(int id) 
+            => orm.Select<User>(id);
 
-        public User? Select(string login) => orm.SelectWhere<User>(new Dictionary<string, object> { { "login", login } }).FirstOrDefault();
+        public User? Select(string login) 
+            => orm.SelectWhereAsync<User>(new Dictionary<string, object> { { "login", login } }).Result.FirstOrDefault();
 
-        public int Insert(User account) => orm.Insert(account);
+        public int Insert(User account) 
+            => orm.InsertAsync(account).Result;
 
-        public void Update(int id, User account) => orm.Update(id, account);
+        public void Update(int id, User account) 
+            => orm.UpdateAsync(id, account);
     }
 }

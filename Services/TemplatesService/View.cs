@@ -26,17 +26,17 @@ namespace HttpServer.TemplatesService
 
         public View(string templateFileName) : this(templateFileName, new { }) { }
 
-        public string GetHTML(string path)
+        public async Task<string> GetHTMLAsync(string path)
         {
-            var template = File.ReadAllText($"{path}/{templateFileName}.sbnhtml");
+            var template = await File.ReadAllTextAsync($"{path}/{templateFileName}.sbnhtml");
 
             var parsedTemplate = Template.Parse(template);
-            var result = Render(parsedTemplate, model, path);
+            var result = await RenderAsync(parsedTemplate, model, path);
 
             return result;
         }
 
-        private string Render(Template template, object? model, string path)
+        private async Task<string> RenderAsync(Template template, object? model, string path)
         {
             var context = new TemplateContext();
 
@@ -48,7 +48,7 @@ namespace HttpServer.TemplatesService
 
             context.PushGlobal(scriptObject);
 
-            return template.Render(context);
+            return await template.RenderAsync(context);
         }
     }
 }

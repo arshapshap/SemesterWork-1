@@ -103,7 +103,7 @@ namespace HttpServer
             if (view is not null)
             {
                 view.CurrentUser = UserController.GetUserBySessionId(sessionId ?? Guid.Empty);
-                return (Encoding.UTF8.GetBytes(view.GetHTML(sitePath)), "text/html");
+                return (Encoding.UTF8.GetBytes(view.GetHTMLAsync(sitePath).Result), "text/html");
             }
 
             return null;
@@ -194,7 +194,7 @@ namespace HttpServer
             }
 
             var view = new View("pages/error", new { ErrorCode = (int)statusCode, ErrorDescription = errorDescription });
-            return (Encoding.UTF8.GetBytes(view.GetHTML(path)), "text/html");
+            return (Encoding.UTF8.GetBytes(view.GetHTMLAsync(path).Result), "text/html");
         }
 
         private static object GetDefaultValue(Type type)

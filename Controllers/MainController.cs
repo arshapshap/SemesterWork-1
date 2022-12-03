@@ -25,7 +25,7 @@ namespace HttpServer.Controllers
 
         public static ControllerResponse ShowMainPage(Guid sessionId, bool showPopular)
         {
-            var publications = PublicationController.GetPublications();
+            var publications = PublicationController.GetAllPublications();
 
             var ordered = (showPopular)
                 ? publications.OrderByDescending(p => p.Rating)

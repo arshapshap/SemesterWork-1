@@ -16,12 +16,16 @@ namespace HttpServer.ORM
             orm = new MyORM(connectionString, "Musicians");
         }
 
-        public Musician[] Select() => orm.Select<Musician>();
+        public Musician[] Select() 
+            => orm.SelectAsync<Musician>().Result;
 
-        public Musician? Select(int id) => orm.Select<Musician>(id);
+        public Musician? Select(int id) 
+            => orm.Select<Musician>(id);
 
-        public Musician? Select(string name) => orm.SelectWhere<Musician>(new Dictionary<string, object> { { "name", name } }).FirstOrDefault();
+        public Musician? Select(string name) 
+            => orm.SelectWhereAsync<Musician>(new Dictionary<string, object> { { "name", name } }).Result.FirstOrDefault();
 
-        public int Insert(Musician musician) => orm.Insert(musician);
+        public int Insert(Musician musician) 
+            => orm.InsertAsync(musician).Result;
     }
 }

@@ -21,50 +21,49 @@ namespace HttpServer.ORM
             TableName = tableName;
         }
 
-        public T[] Select<T>()
+        public async Task<T[]> SelectAsync<T>()
         {
             string sqlExpression = $"SELECT * FROM [dbo].[{TableName}]";
-            return ExecuteQuery<T>(sqlExpression);
+            return await ExecuteQueryAsync<T>(sqlExpression);
         }
 
-        public T[] SelectWhere<T>(Dictionary<string, object> conditions)
+        public async Task<T[]> SelectWhereAsync<T>(Dictionary<string, object> conditions)
         {
             var stringConditions = conditions.Select(c => $"{c.Key}=N'{c.Value.ToString().Replace("'", "''")}'");
             string sqlExpression = $"SELECT * FROM [dbo].[{TableName}] WHERE {string.Join(" AND ", stringConditions)}";
 
-            return ExecuteQuery<T>(sqlExpression);
+            return await ExecuteQueryAsync<T>(sqlExpression);
         }
 
         public T? Select<T>(int id) => Select<T>("id", id.ToString());
 
         public T? Select<T>(string primaryKeyColumn, string primaryKeyValue) 
-            => SelectWhere<T>(new Dictionary<string, object>() { { primaryKeyColumn, primaryKeyValue } }).FirstOrDefault();
+            => SelectWhereAsync<T>(new Dictionary<string, object>() { { primaryKeyColumn, primaryKeyValue } }).Result.FirstOrDefault();
 
-        public int Insert<T>(T item, bool idExists = true)
+        public async Task<int> InsertAsync<T>(T item, bool idExists = true)
         {
             var properties = typeof(T)
                 .GetProperties(BindingFlags.Public | BindingFlags.Instance)
                 .Where(p => p.GetCustomAttribute(typeof(FieldDB)) is not null)
                 .ToDictionary(p => ((FieldDB)p.GetCustomAttribute(typeof(FieldDB))).ColumnName, p => $"{(((FieldDB)p.GetCustomAttribute(typeof(FieldDB))).IsCyrillic ? "N" : "")}'{p.GetValue(item).ToString().Replace("'", "''")}'");
 
-            string sqlExpression = $"INSERT INTO [dbo].[{TableName}]({string.Join(',', properties.Keys)}) {((idExists) ? "OUTPUT inserted.id AS 'id'" : "")} VALUES ({string.Join(',', properties.Values)})";
+            string sqlExpression = $"INSERT INTO [dbo].[{TableName}]({string.Join(',', properties.Keys)}) {(idExists ? "OUTPUT inserted.id AS 'id'" : "")} VALUES ({string.Join(',', properties.Values)})";
 
             int insertedId = 0;
-
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand(sqlExpression, connection);
                 if (idExists)
-                    insertedId = (int)command.ExecuteScalar();
+                    return (int)(await command.ExecuteScalarAsync() ?? 0);
                 else
-                    command.ExecuteNonQuery();
+                    await command.ExecuteNonQueryAsync();
             }
 
             return insertedId;
         }
 
-        public void Update<T>(int id, T item)
+        public async void UpdateAsync<T>(int id, T item)
         {
             var changes = typeof(T)
                 .GetProperties(BindingFlags.Public | BindingFlags.Instance)
@@ -74,45 +73,45 @@ namespace HttpServer.ORM
 
             string sqlExpression = $"UPDATE [dbo].[{TableName}] SET {string.Join(',', changes)} WHERE id={id}";
 
-            ExecuteNonQuery(sqlExpression);
+            await ExecuteNonQueryAsync(sqlExpression);
         }
         
 
-        public void DeleteWhere(Dictionary<string, object> conditions)
+        public async void DeleteWhereAsync(Dictionary<string, object> conditions)
         {
             var stringConditions = conditions.Select(c => $"{c.Key}=N'{c.Value.ToString().Replace("'", "''")}'");
             string sqlExpression = $"DELETE FROM [dbo].[{TableName}] WHERE {string.Join(" AND ", stringConditions)}";
 
-            ExecuteNonQuery(sqlExpression);
+            await ExecuteNonQueryAsync(sqlExpression);
         }
 
         public void Delete(int id) => Delete("id", id.ToString());
 
         public void Delete(string primaryKeyColumn, string primaryKeyValue) 
-            => DeleteWhere(new Dictionary<string, object>() { { primaryKeyColumn, primaryKeyValue } });
+            => DeleteWhereAsync(new Dictionary<string, object>() { { primaryKeyColumn, primaryKeyValue } });
 
-        private void ExecuteNonQuery(string sqlExpression)
+        private async Task ExecuteNonQueryAsync(string sqlExpression)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand(sqlExpression, connection);
-                command.ExecuteNonQuery();
+                await command.ExecuteNonQueryAsync();
             }
         }
 
-        private T[] ExecuteQuery<T>(string sqlExpression)
+        private async Task<T[]> ExecuteQueryAsync<T>(string sqlExpression)
         {
             var result = new List<T>();
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand(sqlExpression, connection);
-                SqlDataReader reader = command.ExecuteReader();
+                var reader = await command.ExecuteReaderAsync();
 
                 if (reader.HasRows)
                 {
-                    while (reader.Read())
+                    while (await reader.ReadAsync())
                     {
                         var newItem = Activator.CreateInstance(typeof(T), GetValues(reader));
                         if (newItem is T item)

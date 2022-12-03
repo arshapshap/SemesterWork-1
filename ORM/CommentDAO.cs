@@ -18,9 +18,11 @@ namespace HttpServer.ORM
 
         public Comment? Select(int id) => orm.Select<Comment>(id);
 
-        public Comment[] SelectByPublicationId(int publicationId) => orm.SelectWhere<Comment>(new Dictionary<string, object> { { "publication_id", publicationId } });
+        public Comment[] SelectByPublicationId(int publicationId) 
+            => orm.SelectWhereAsync<Comment>(new Dictionary<string, object> { { "publication_id", publicationId } }).Result;
 
-        public int Insert(Comment comment) => orm.Insert(comment);
+        public int Insert(Comment comment) 
+            => orm.InsertAsync(comment).Result;
 
         public void Delete(int id) => orm.Delete(id);
     }

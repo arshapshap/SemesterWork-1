@@ -16,14 +16,17 @@ namespace HttpServer.ORM
             orm = new MyORM(connectionString, "Ratings");
         }
 
-        public Rating? Select(int publicationId, int userId) => orm.SelectWhere<Rating>(new Dictionary<string, object> 
+        public Rating? Select(int publicationId, int userId) 
+            => orm.SelectWhereAsync<Rating>(new Dictionary<string, object> 
         { 
             { "publication_id", publicationId },
             { "user_id", userId }
-        }).FirstOrDefault();
+        }).Result.FirstOrDefault();
 
-        public Rating[] SelectByPublicationId(int publicationId) => orm.SelectWhere<Rating>(new Dictionary<string, object> { { "publication_id", publicationId } });
+        public Rating[] SelectByPublicationId(int publicationId) 
+            => orm.SelectWhereAsync<Rating>(new Dictionary<string, object> { { "publication_id", publicationId } }).Result;
 
-        public void Insert(Rating comment) => orm.Insert(comment, false);
+        public void Insert(Rating comment) 
+            => orm.InsertAsync(comment, false);
     }
 }

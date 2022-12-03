@@ -135,11 +135,15 @@ namespace HttpServer.Controllers
             return new ControllerResponse(view);
         }
 
-        public static Publication[] GetUserPublications(int userId) => publicationDAO.SelectWhere(new Dictionary<string, object> { { "user_id", userId } });
+        public static Publication[] GetUserPublications(int userId) 
+            => publicationDAO.SelectWhere(new Dictionary<string, object> { { "user_id", userId } });
 
-        public static Publication[] GetMusicianPublications(int musicianId) => publicationDAO.SelectWhere(new Dictionary<string, object> { { "musician_id", musicianId } });
+        public static Publication[] GetMusicianPublications(int musicianId) 
+            => publicationDAO.SelectWhere(new Dictionary<string, object> { { "musician_id", musicianId } });
 
-        public static Publication? GetPublication(int id) => publicationDAO.Select(id);
-        public static Publication[] GetPublications() => publicationDAO.Select();
+        public static Publication? GetPublication(int id) 
+            => publicationDAO.Select(id);
+        public static Publication[] GetAllPublications() 
+            => publicationDAO.Select();
     }
 }

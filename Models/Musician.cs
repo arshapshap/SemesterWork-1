@@ -22,7 +22,8 @@ namespace HttpServer.Models
         [FieldDB("image")]
         public string Image { get; set; }
 
-        public Publication[] Publications { get => PublicationController.GetMusicianPublications(Id).OrderByDescending(p => p.Rating).ToArray(); }
+        public Publication[] Publications { get 
+                => PublicationController.GetMusicianPublications(Id).OrderByDescending(p => p.Rating).ToArray(); }
 
         public Musician(int id, string name, string biography, string image) : this(name, biography, image)
         {
