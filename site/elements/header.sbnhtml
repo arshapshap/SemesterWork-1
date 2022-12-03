@@ -5,7 +5,7 @@
         <form id="logout" method="POST" action="/profile/logout"></form>
         <a href="#" class="link" onclick="document.getElementById('logout').submit(); return false;">Выйти</a>
     </div>
-    <a class="profile" href="/profile">
+    <a href="/profile">
         <img class="clickable-image small-image circular-image"
             src="{{current_user.image}}">
     </a>
@@ -15,7 +15,7 @@
         или
         <a href="/register" class="link">зарегистрироваться</a>
     </div>
-    <a class="profile" href="/auth">
+    <a href="/auth">
         <img class="clickable-image small-image circular-image" src="~/img/profile.png">
     </a>
     {{ end }}

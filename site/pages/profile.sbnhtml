@@ -77,7 +77,9 @@
                         {{ include 'elements/publication.sbnhtml' publication }}
                     {{ end }}
                     {{ else }}
-                    <div class="div-title">Пользователь ничего не публиковал.</div>
+                    <div class="div-title">
+                        {{ if (current_user.id == user.id) }}Вы ничего не публиковали.{{ else }}Пользователь ничего не публиковал.{{ end }}
+                    </div>
                 {{ end }}
             </div>
         </div>
