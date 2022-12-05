@@ -6,6 +6,7 @@
 
 .login-link {
     cursor: default;
+    text-decoration: none;
 }
 
 .publication-author {

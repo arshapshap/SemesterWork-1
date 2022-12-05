@@ -1,4 +1,5 @@
 ﻿using HttpServer.Attributes;
+using HttpServer.Models;
 using HttpServer.SessionsService;
 using HttpServer.TemplatesService;
 using System;
@@ -15,25 +16,36 @@ namespace HttpServer.Controllers
     {
         public static readonly string DatabaseConnectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=SiteDB;Integrated Security=True";
 
-        [HttpGET("^(main|popular)$")]
+        [HttpGET("^popular$")]
         public static ControllerResponse ShowPopularPublications(Guid sessionId)
-            => ShowMainPage(sessionId, showPopular: true);
-
-        [HttpGET("^new$")]
-        public static ControllerResponse ShowNewPublications(Guid sessionId)
-            => ShowMainPage(sessionId, showPopular: false);
-
-        public static ControllerResponse ShowMainPage(Guid sessionId, bool showPopular)
         {
-            var publications = PublicationController.GetAllPublications();
-
-            var ordered = (showPopular)
-                ? publications.OrderByDescending(p => p.Rating)
-                : publications.OrderByDescending(p => p.Id);
+            var publications = PublicationController.GetAllPublications().OrderByDescending(p => p.Rating);
 
             var currentUser = UserController.GetUserBySessionId(sessionId);
 
-            var view = new View("pages/main", new { ShowPopular = showPopular, CurrentUser = currentUser, Publications = ordered });
+            var view = new View("pages/main", new { AjaxRequest = true, ShowPopular = true, CurrentUser = currentUser, Publications = publications });
+            return new ControllerResponse(view);
+        }
+
+        [HttpGET("^new$")]
+        public static ControllerResponse ShowNewPublications(Guid sessionId)
+        {
+            var publications = PublicationController.GetAllPublications().OrderByDescending(p => p.Id);
+
+            var currentUser = UserController.GetUserBySessionId(sessionId);
+
+            var view = new View("pages/main", new { AjaxRequest = true, ShowPopular = false, CurrentUser = currentUser, Publications = publications });
+            return new ControllerResponse(view);
+        }
+
+        [HttpGET("^main$")]
+        public static ControllerResponse ShowMainPage(Guid sessionId)
+        {
+            var publications = PublicationController.GetAllPublications();
+
+            var currentUser = UserController.GetUserBySessionId(sessionId);
+
+            var view = new View("pages/main", new { ShowPopular = true, CurrentUser = currentUser, Publications = publications });
             return new ControllerResponse(view);
         }
 

@@ -1,7 +1,7 @@
 <div class="header-right">
     {{ if current_user }}
     <div class="user-info">
-        <div>{{current_user.name}} (<a href="/profile" class="link">{{current_user.login}}</a>)</div>
+        <div>{{ current_user.name }} (<a href="/profile" class="link">{{ current_user.login }}</a>)</div>
         <form id="logout" method="POST" action="/profile/logout"></form>
         <a href="#" class="link" onclick="document.getElementById('logout').submit(); return false;">Выйти</a>
     </div>
@@ -10,7 +10,7 @@
             src="{{current_user.image}}">
     </a>
     {{ else }}
-    <div>
+    <div class="unauth-info">
         <a href="/auth" class="link">Войти</a>
         или
         <a href="/register" class="link">зарегистрироваться</a>
