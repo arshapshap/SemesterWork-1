@@ -41,7 +41,7 @@ namespace HttpServer.Controllers
         [HttpGET("^main$")]
         public static ControllerResponse ShowMainPage(Guid sessionId)
         {
-            var publications = PublicationController.GetAllPublications();
+            var publications = PublicationController.GetAllPublications().OrderByDescending(p => p.Rating);
 
             var currentUser = UserController.GetUserBySessionId(sessionId);
 
